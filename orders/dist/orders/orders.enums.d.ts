@@ -1,6 +1,0 @@
-export declare enum STATUS {
-    PENDING = "PENDING",
-    CANCELED = "CANCELED",
-    REJECTED = "REJECTED",
-    CONFIRMED = "CONFIRMED"
-}
