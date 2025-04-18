@@ -16,5 +16,9 @@ export class ShippingStep implements ISagaStep {
   }
   async rollback(): Promise<void> {
     console.debug('invoking shipping rollback!');
+    await this.rabbitMQService.sendShippingRollbackMessage(
+      this.message.product,
+      this.message.quantity,
+    );
   }
 }

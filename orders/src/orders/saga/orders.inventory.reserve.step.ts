@@ -17,6 +17,9 @@ export class InventoryReserveStep implements ISagaStep {
   }
   async rollback(): Promise<void> {
     console.debug('invoking inventory rollback!');
-    console.debug('nothing to do, was simply a check!');
+    await this.rabbitMQService.sendInventoryReserveRollbackMessage(
+      this.message.product,
+      this.message.quantity,
+    );
   }
 }

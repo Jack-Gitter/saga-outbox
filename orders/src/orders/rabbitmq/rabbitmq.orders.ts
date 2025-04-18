@@ -24,12 +24,20 @@ export class RabbitMQService {
     );
   }
 
+  async sendInventoryReserveRollbackMessage(product: number, quantity: number) {
+    // TODO
+  }
+
   async sendShippingMessage(product: number, quantity: number) {
     await this.channel.sendToQueue(
       this.shipping_queue,
       Buffer.from(JSON.stringify({ product, quantity })),
     );
     await this.channel.consume(this.shipping_queue_resp, this.handleResponse);
+  }
+
+  async sendShippingRollbackMessage(product: number, quantity: number) {
+    // TODO
   }
 
   async sendInventoryDeleteMessage(product: number, quantity: number) {
