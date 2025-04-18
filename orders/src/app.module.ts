@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Order } from './orders/orders.entity';
+import { OrdersOutboxMessage } from './orders/orders.outbox.entity';
 
 @Module({
   imports: [
@@ -10,8 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'postgres',
       password: 'postgres',
       database: 'orders',
-      entities: [],
-      autoLoadEntities: true,
+      entities: [Order, OrdersOutboxMessage],
     }),
   ],
 })
