@@ -9,34 +9,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Order = void 0;
+exports.OrdersOutboxMessage = void 0;
 const typeorm_1 = require("typeorm");
-const orders_enums_1 = require("./orders.enums");
-let Order = class Order {
+let OrdersOutboxMessage = class OrdersOutboxMessage {
     constructor(product, quantity) {
         this.product = product;
         this.quantity = quantity;
     }
 };
-exports.Order = Order;
+exports.OrdersOutboxMessage = OrdersOutboxMessage;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], Order.prototype, "id", void 0);
+], OrdersOutboxMessage.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'number', nullable: false }),
     __metadata("design:type", Number)
-], Order.prototype, "product", void 0);
+], OrdersOutboxMessage.prototype, "product", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'number', nullable: false }),
     __metadata("design:type", Number)
-], Order.prototype, "quantity", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'enum', nullable: false, default: orders_enums_1.STATUS.PENDING }),
-    __metadata("design:type", String)
-], Order.prototype, "status", void 0);
-exports.Order = Order = __decorate([
-    (0, typeorm_1.Entity)('Orders'),
+], OrdersOutboxMessage.prototype, "quantity", void 0);
+exports.OrdersOutboxMessage = OrdersOutboxMessage = __decorate([
+    (0, typeorm_1.Entity)('OrdersOutboxMessages'),
     __metadata("design:paramtypes", [Number, Number])
-], Order);
-//# sourceMappingURL=orders.entity.js.map
+], OrdersOutboxMessage);
+//# sourceMappingURL=orders.outbox.entity.js.map

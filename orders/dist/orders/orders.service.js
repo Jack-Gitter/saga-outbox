@@ -13,18 +13,23 @@ exports.OrdersService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
 const orders_entity_1 = require("./orders.entity");
+const orders_outbox_entity_1 = require("./orders.outbox.entity");
 let OrdersService = class OrdersService {
-    constructor(ordersRepository) {
-        this.ordersRepository = ordersRepository;
+    constructor(dataSource) {
+        this.dataSource = dataSource;
     }
-    async initiateOrderSaga(product, quantity) {
-        const order = new orders_entity_1.Order(product, quantity);
-        await this.ordersRepository.save(order);
+    async initiateOrder(product, quantity) {
+        await this.dataSource.transaction(async (entityManager) => {
+            const order = new orders_entity_1.Order(product, quantity);
+            const outboxMessage = new orders_outbox_entity_1.OrdersOutboxMessage(product, quantity);
+            await entityManager.save(order);
+            await entityManager.save(outboxMessage);
+        });
     }
 };
 exports.OrdersService = OrdersService;
 exports.OrdersService = OrdersService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeorm_1.Repository])
+    __metadata("design:paramtypes", [typeorm_1.DataSource])
 ], OrdersService);
 //# sourceMappingURL=orders.service.js.map

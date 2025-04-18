@@ -9,6 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const orders_entity_1 = require("./orders/orders.entity");
+const orders_outbox_entity_1 = require("./orders/orders.outbox.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -22,8 +24,7 @@ exports.AppModule = AppModule = __decorate([
                 username: 'postgres',
                 password: 'postgres',
                 database: 'orders',
-                entities: [],
-                autoLoadEntities: true,
+                entities: [orders_entity_1.Order, orders_outbox_entity_1.OrdersOutboxMessage],
             }),
         ],
     })
