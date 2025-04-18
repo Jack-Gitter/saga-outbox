@@ -1,0 +1,10 @@
+db:
+  image: postgres:latest
+  environment:
+    POSTGRES_PASSWORD: route_admin
+    POSTGRES_USER: route_admin
+  expose:
+    - "1000" 
+  ports:
+    - "1000:1000"
+  command: -p 1000
