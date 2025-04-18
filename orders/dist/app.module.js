@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const orders_entity_1 = require("./orders/orders.entity");
 const orders_outbox_entity_1 = require("./orders/orders.outbox.entity");
+const orders_module_1 = require("./orders/orders.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -23,9 +24,10 @@ exports.AppModule = AppModule = __decorate([
                 port: 1000,
                 username: 'postgres',
                 password: 'postgres',
-                database: 'orders',
+                database: 'postgres',
                 entities: [orders_entity_1.Order, orders_outbox_entity_1.OrdersOutboxMessage],
             }),
+            orders_module_1.OrdersModule,
         ],
     })
 ], AppModule);

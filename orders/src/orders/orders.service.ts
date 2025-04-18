@@ -30,6 +30,9 @@ export class OrdersService {
         this.dataSource.getRepository(OrdersOutboxMessage);
       const outboxMessages = await orderOutboxRepository.find();
 
+      console.debug('found messages!');
+      console.debug(outboxMessages);
+
       const orchestrators = outboxMessages.map((message) =>
         this.constructOrchestrator(message),
       );

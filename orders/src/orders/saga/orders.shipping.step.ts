@@ -8,10 +8,13 @@ export class ShippingStep implements ISagaStep {
     private message: OrdersOutboxMessage,
   ) {}
   async invoke(): Promise<void> {
-    this.rabbitMQService.sendShippingMessage(
+    console.debug('invoking shipping step!');
+    await this.rabbitMQService.sendShippingMessage(
       this.message.product,
       this.message.quantity,
     );
   }
-  async rollback(): Promise<void> {}
+  async rollback(): Promise<void> {
+    console.debug('invoking shipping rollback!');
+  }
 }

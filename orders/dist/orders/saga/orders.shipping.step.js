@@ -2,11 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShippingStep = void 0;
 class ShippingStep {
-    invoke() {
-        throw new Error('Method not implemented.');
+    constructor(rabbitMQService, message) {
+        this.rabbitMQService = rabbitMQService;
+        this.message = message;
     }
-    rollback() {
-        throw new Error('Method not implemented.');
+    async invoke() {
+        console.debug('invoking shipping step!');
+        await this.rabbitMQService.sendShippingMessage(this.message.product, this.message.quantity);
+    }
+    async rollback() {
+        console.debug('invoking shipping rollback!');
     }
 }
 exports.ShippingStep = ShippingStep;

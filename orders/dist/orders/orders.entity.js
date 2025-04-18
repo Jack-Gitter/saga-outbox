@@ -24,15 +24,20 @@ __decorate([
     __metadata("design:type", Number)
 ], Order.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'number', nullable: false }),
+    (0, typeorm_1.Column)({ type: 'int', nullable: false }),
     __metadata("design:type", Number)
 ], Order.prototype, "product", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'number', nullable: false }),
+    (0, typeorm_1.Column)({ type: 'int', nullable: false }),
     __metadata("design:type", Number)
 ], Order.prototype, "quantity", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', nullable: false, default: orders_enums_1.STATUS.PENDING }),
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: orders_enums_1.STATUS,
+        nullable: false,
+        default: orders_enums_1.STATUS.PENDING,
+    }),
     __metadata("design:type", String)
 ], Order.prototype, "status", void 0);
 exports.Order = Order = __decorate([

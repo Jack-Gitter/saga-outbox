@@ -23,11 +23,11 @@ __decorate([
     __metadata("design:type", Number)
 ], OrdersOutboxMessage.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'number', nullable: false }),
+    (0, typeorm_1.Column)({ type: 'int', nullable: false }),
     __metadata("design:type", Number)
 ], OrdersOutboxMessage.prototype, "product", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'number', nullable: false }),
+    (0, typeorm_1.Column)({ type: 'int', nullable: false }),
     __metadata("design:type", Number)
 ], OrdersOutboxMessage.prototype, "quantity", void 0);
 exports.OrdersOutboxMessage = OrdersOutboxMessage = __decorate([
