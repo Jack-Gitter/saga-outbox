@@ -12,18 +12,16 @@ export class OrdersService {
   }
   async initiateOrder(product: number, quantity: number) {
     await this.dataSource.transaction(async (entityManager) => {
-      const order = new Order(product, quantity);
-      const outboxMessage = new OrdersOutboxMessage(product, quantity);
-      await entityManager.save(order);
-      await entityManager.save(outboxMessage);
+      await entityManager.save(new Order(product, quantity));
+      await entityManager.save(new OrdersOutboxMessage(product, quantity));
     });
   }
 
   async pollOrderOutbox() {
-    setTimeout(() => {
+    setInterval(async () => {
       const orderOutboxRepository =
         this.dataSource.getRepository(OrdersOutboxMessage);
-      const outboxMessages = orderOutboxRepository.find();
+      const outboxMessages = await orderOutboxRepository.find();
       console.log(outboxMessages);
     }, 5000);
   }

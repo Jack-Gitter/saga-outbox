@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './orders/orders.entity';
 import { OrdersOutboxMessage } from './orders/orders.outbox.entity';
+import { OrdersController } from './orders/orders.controller';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -14,6 +16,7 @@ import { OrdersOutboxMessage } from './orders/orders.outbox.entity';
       database: 'postgres',
       entities: [Order, OrdersOutboxMessage],
     }),
+    OrdersModule,
   ],
 })
 export class AppModule {}
