@@ -6,6 +6,7 @@ import { OrdersSagaOrchestrator } from './saga/orders.orchestrator';
 import { InventoryReserveStep } from './saga/orders.inventory.reserve.step';
 import { RabbitMQService } from './rabbitmq/rabbitmq.orders';
 import { ShippingStep } from './saga/orders.shipping.step';
+import { InventoryDeleteStep } from './saga/orders.inventory.delete.step';
 
 @Injectable()
 export class OrdersService {
@@ -48,8 +49,17 @@ export class OrdersService {
   }
 
   constructOrchestrator(message: OrdersOutboxMessage) {
-    const inventoryStep = new InventoryReserveStep(this.rabbitMQ, message);
+    const reserveInventoryStep = new InventoryReserveStep(
+      this.rabbitMQ,
+      message,
+    );
     const shippingStep = new ShippingStep(this.rabbitMQ, message);
-    return new OrdersSagaOrchestrator([inventoryStep, shippingStep]);
+    const deleteInventoryStep = new InventoryDeleteStep(this.rabbitMQ, message);
+
+    return new OrdersSagaOrchestrator([
+      reserveInventoryStep,
+      shippingStep,
+      deleteInventoryStep,
+    ]);
   }
 }
