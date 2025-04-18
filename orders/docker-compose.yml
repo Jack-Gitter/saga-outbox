@@ -3,7 +3,7 @@ db:
   environment:
     POSTGRES_PASSWORD: route_admin
     POSTGRES_USER: route_admin
-    PG_PORT: 1000
+    PGPORT: 1000
   expose:
     - "1000" 
   ports:
