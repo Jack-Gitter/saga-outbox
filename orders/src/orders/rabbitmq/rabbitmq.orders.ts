@@ -34,7 +34,7 @@ export class RabbitMQService {
 
   async sendInventoryDeleteMessage(product: number, quantity: number) {
     await this.channel.sendToQueue(
-      this.inventory_reserve_queue,
+      this.inventory_delete_queue,
       Buffer.from(JSON.stringify({ product, quantity })),
     );
     await this.channel.consume(
