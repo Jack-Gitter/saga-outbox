@@ -9,9 +9,9 @@ export class OrdersOutboxMessage {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'number', nullable: false })
+  @Column({ type: 'int', nullable: false })
   product: number;
 
-  @Column({ type: 'number', nullable: false })
+  @Column({ type: 'int', nullable: false })
   quantity: number;
 }

@@ -8,6 +8,6 @@ export const dataSource: DataSource = new DataSource({
   port: 1000,
   username: 'postgres',
   password: 'postgres',
-  database: 'orders',
+  database: 'postgres',
   entities: [Order, OrdersOutboxMessage],
 });

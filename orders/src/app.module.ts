@@ -11,7 +11,7 @@ import { OrdersOutboxMessage } from './orders/orders.outbox.entity';
       port: 1000,
       username: 'postgres',
       password: 'postgres',
-      database: 'orders',
+      database: 'postgres',
       entities: [Order, OrdersOutboxMessage],
     }),
   ],

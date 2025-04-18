@@ -11,12 +11,17 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'number', nullable: false })
+  @Column({ type: 'int', nullable: false })
   product: number;
 
-  @Column({ type: 'number', nullable: false })
+  @Column({ type: 'int', nullable: false })
   quantity: number;
 
-  @Column({ type: 'enum', nullable: false, default: STATUS.PENDING })
+  @Column({
+    type: 'enum',
+    enum: STATUS,
+    nullable: false,
+    default: STATUS.PENDING,
+  })
   status: STATUS;
 }
