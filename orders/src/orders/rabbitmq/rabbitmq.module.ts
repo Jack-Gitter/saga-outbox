@@ -6,17 +6,17 @@ const providers: Provider[] = [
   {
     provide: RabbitMQOrdersService,
     useFactory: async () => {
-      const inventory_channel = 'INVENTORY_CHANNEL';
-      const shipping_channel = 'SHIPPING_CHANNEL';
+      const inventory_queue = 'INVENTORY_CHANNEL';
+      const shipping_queue = 'SHIPPING_CHANNEL';
       const connection = new amqp.Connection('amqp://localhost');
       await connection.init();
       const channel = await connection.createChannel();
-      await channel.assertQueue(inventory_channel);
-      await channel.assertQueue(shipping_channel);
+      await channel.assertQueue(inventory_queue);
+      await channel.assertQueue(shipping_queue);
       return new RabbitMQOrdersService(
         channel,
-        inventory_channel,
-        shipping_channel,
+        inventory_queue,
+        shipping_queue,
       );
     },
   },
