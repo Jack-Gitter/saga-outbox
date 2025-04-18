@@ -7,6 +7,9 @@ import { OrdersOutboxMessage } from './orders.outbox.entity';
 export class OrdersService {
   constructor(private dataSource: DataSource) {}
 
+  onModuleInit() {
+    this.pollOrderOutbox();
+  }
   async initiateOrder(product: number, quantity: number) {
     await this.dataSource.transaction(async (entityManager) => {
       const order = new Order(product, quantity);
@@ -14,5 +17,14 @@ export class OrdersService {
       await entityManager.save(order);
       await entityManager.save(outboxMessage);
     });
+  }
+
+  async pollOrderOutbox() {
+    setTimeout(() => {
+      const orderOutboxRepository =
+        this.dataSource.getRepository(OrdersOutboxMessage);
+      const outboxMessages = orderOutboxRepository.find();
+      console.log(outboxMessages);
+    }, 5000);
   }
 }
