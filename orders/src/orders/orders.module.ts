@@ -1,7 +1,7 @@
 import { Module, Provider } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { OrdersController } from './orders.controller';
+import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 
 const providers: Provider[] = [
   {

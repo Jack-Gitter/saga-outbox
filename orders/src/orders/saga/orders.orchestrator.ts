@@ -1,5 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import { ISagaOrchestrator } from 'src/saga/ISagaOrchestrator';
 import { ISagaStep } from 'src/saga/ISagaStep';
+
+@Injectable()
 export class OrdersSagaOrchestrator implements ISagaOrchestrator {
   constructor(private steps: ISagaStep[]) {}
 
