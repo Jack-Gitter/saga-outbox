@@ -2,7 +2,7 @@ import { ISagaStep } from 'src/saga/ISagaStep';
 import { RabbitMQService } from '../rabbitmq/rabbitmq.orders';
 import { OrdersOutboxMessage } from '../orders.outbox.entity';
 
-export class InventoryStep implements ISagaStep {
+export class InventoryDeleteStep implements ISagaStep {
   constructor(
     private rabbitMQService: RabbitMQService,
     private message: OrdersOutboxMessage,

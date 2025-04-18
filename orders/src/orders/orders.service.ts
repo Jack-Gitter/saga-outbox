@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
 import { OrdersSagaOrchestrator } from './saga/orders.orchestrator';
-import { InventoryStep } from './saga/orders.inventory.step';
+import { InventoryReserveStep } from './saga/orders.inventory.reserve.step';
 import { RabbitMQService } from './rabbitmq/rabbitmq.orders';
 import { ShippingStep } from './saga/orders.shipping.step';
 
@@ -48,7 +48,7 @@ export class OrdersService {
   }
 
   constructOrchestrator(message: OrdersOutboxMessage) {
-    const inventoryStep = new InventoryStep(this.rabbitMQ, message);
+    const inventoryStep = new InventoryReserveStep(this.rabbitMQ, message);
     const shippingStep = new ShippingStep(this.rabbitMQ, message);
     return new OrdersSagaOrchestrator([inventoryStep, shippingStep]);
   }
