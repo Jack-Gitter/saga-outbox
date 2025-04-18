@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
+import { RabbitMQOrdersService } from './rabbitmq/rabbitmq.orders';
 
 @Injectable()
 export class OrdersService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    private rabbitMQService: RabbitMQOrdersService,
+  ) {}
 
   onModuleInit() {
     this.pollOrderOutbox();
