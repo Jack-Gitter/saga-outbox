@@ -33,7 +33,14 @@ export class RabbitMQService {
   }
 
   async sendInventoryDeleteMessage(product: number, quantity: number) {
-    await this.channel.sendToQueue(this.inventory_reserve_queue, content);
+    await this.channel.sendToQueue(
+      this.inventory_reserve_queue,
+      Buffer.from(JSON.stringify({ product, quantity })),
+    );
+    await this.channel.consume(
+      this.inventory_delete_queue_resp,
+      this.handleResponse,
+    );
   }
 
   private handleResponse(mes: amqp.Message) {
