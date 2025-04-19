@@ -101,10 +101,22 @@ export class OrdersService {
   }) {
     const reserveInventoryStep = new InventoryReserveStep(
       this.rabbitMQ,
-      message,
+      message.product,
+      message.quantity,
+      message.orderId,
     );
-    const shippingStep = new ShippingStep(this.rabbitMQ, message);
-    const deleteInventoryStep = new InventoryDeleteStep(this.rabbitMQ, message);
+    const shippingStep = new ShippingStep(
+      this.rabbitMQ,
+      message.product,
+      message.quantity,
+      message.orderId,
+    );
+    const deleteInventoryStep = new InventoryDeleteStep(
+      this.rabbitMQ,
+      message.product,
+      message.quantity,
+      message.orderId,
+    );
 
     const steps = new Map<ORDERS_SAGA_STEP, ISagaStep>();
     steps.set(ORDERS_SAGA_STEP.RESERVE_INVENTORY, reserveInventoryStep);
