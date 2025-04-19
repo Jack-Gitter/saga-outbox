@@ -14,4 +14,12 @@ export class OrdersOutboxMessage {
 
   @Column({ type: 'int', nullable: false })
   quantity: number;
+
+  public toJSON() {
+    return {
+      id: this.id,
+      product: this.product,
+      quantity: this.quantity,
+    };
+  }
 }

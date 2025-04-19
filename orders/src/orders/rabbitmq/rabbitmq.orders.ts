@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as amqp from 'amqplib-as-promised';
+import { OrdersOutboxMessage } from '../orders.outbox.entity';
 
 Injectable();
 export class RabbitMQService {
@@ -17,10 +18,10 @@ export class RabbitMQService {
     private shipping_rollback_queue_resp: string,
   ) {}
 
-  async sendInventoryReserveMessage(product: number, quantity: number) {
+  async sendInventoryReserveMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.inventory_reserve_queue,
-      Buffer.from(JSON.stringify({ product, quantity })),
+      Buffer.from(JSON.stringify(message)),
     );
     return new Promise((res) => {
       this.channel.consume(
@@ -32,10 +33,10 @@ export class RabbitMQService {
     });
   }
 
-  async sendInventoryReserveRollbackMessage(product: number, quantity: number) {
+  async sendInventoryReserveRollbackMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.inventory_reserve_rollback_queue,
-      Buffer.from(JSON.stringify({ product, quantity })),
+      Buffer.from(JSON.stringify(message)),
     );
     return new Promise((res) => {
       this.channel.consume(
@@ -47,10 +48,10 @@ export class RabbitMQService {
     });
   }
 
-  async sendShippingMessage(product: number, quantity: number) {
+  async sendShippingMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.shipping_queue,
-      Buffer.from(JSON.stringify({ product, quantity })),
+      Buffer.from(JSON.stringify(message)),
     );
     return new Promise((res) => {
       this.channel.consume(this.shipping_queue_resp, (mes: amqp.Message) => {
@@ -59,10 +60,10 @@ export class RabbitMQService {
     });
   }
 
-  async sendShippingRollbackMessage(product: number, quantity: number) {
+  async sendShippingRollbackMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.shipping_rollback_queue,
-      Buffer.from(JSON.stringify({ product, quantity })),
+      Buffer.from(JSON.stringify(message)),
     );
     return new Promise((res) => {
       this.channel.consume(
@@ -74,10 +75,10 @@ export class RabbitMQService {
     });
   }
 
-  async sendInventoryDeleteMessage(product: number, quantity: number) {
+  async sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.inventory_delete_queue,
-      Buffer.from(JSON.stringify({ product, quantity })),
+      Buffer.from(JSON.stringify(message)),
     );
     return new Promise((res) => {
       this.channel.consume(
