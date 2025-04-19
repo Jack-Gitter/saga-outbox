@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { OrdersOutgoingMessage } from './orders.types';
 
 @Entity('OrdersOutboxMessages')
 export class OrdersOutboxMessage {
@@ -20,7 +19,7 @@ export class OrdersOutboxMessage {
   @Column({ type: 'int', nullable: false })
   quantity: number;
 
-  public toJSON(): OrdersOutgoingMessage {
+  public toJSON() {
     return {
       orderId: this.orderId,
       product: this.product,

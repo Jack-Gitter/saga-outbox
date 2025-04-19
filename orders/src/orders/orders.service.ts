@@ -11,7 +11,6 @@ import { Message } from 'amqplib';
 import { ORDERS_SAGA_STEP } from './saga/orders.saga.enum';
 import { ISagaStep } from 'src/saga/ISagaStep';
 import { STATUS } from './orders.enums';
-import { OrdersOutgoingMessage } from './orders.types';
 
 @Injectable()
 export class OrdersService {
@@ -61,7 +60,7 @@ export class OrdersService {
       console.debug(outboxMessages);
 
       const orchestrators = outboxMessages.map((message) => {
-        const orchestrator = this.constructOrchestrator(message.toJSON());
+        const orchestrator = this.constructOrchestrator(message);
         this.runningSagas.set(message.orderId, orchestrator);
         return orchestrator;
       });
@@ -99,20 +98,16 @@ export class OrdersService {
   async createSagaFromPendingOrders() {
     const repo = this.dataSource.getRepository(Order);
     const pendingOrders = await repo.findBy({ status: STATUS.PENDING });
-    const orderData = pendingOrders.map((order) => {
-      return {
-        product: order.product,
-        quantity: order.quantity,
-        orderId: order.id,
-      } satisfies OrdersOutgoingMessage;
+    const messages = pendingOrders.map((order) => {
+      return new OrdersOutboxMessage(order.product, order.quantity, order.id);
     });
-    orderData.forEach((data) => {
-      const orchestrator = this.constructOrchestrator(data);
-      this.runningSagas.set(data.orderId, orchestrator);
+    messages.forEach((message) => {
+      const orchestrator = this.constructOrchestrator(message);
+      this.runningSagas.set(message.orderId, orchestrator);
     });
   }
 
-  constructOrchestrator(message: OrdersOutgoingMessage) {
+  constructOrchestrator(message: OrdersOutboxMessage) {
     const reserveInventoryStep = new InventoryReserveStep(
       this.rabbitMQ,
       message.product,

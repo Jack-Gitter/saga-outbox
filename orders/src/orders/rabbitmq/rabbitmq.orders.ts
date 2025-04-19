@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as amqp from 'amqplib-as-promised';
 import { OrdersOutboxMessage } from '../orders.outbox.entity';
-import { OrdersOutgoingMessage } from '../orders.types';
 
 Injectable();
 export class RabbitMQService {
@@ -39,10 +38,10 @@ export class RabbitMQService {
     this.channel.consume(this.inventory_reserve_queue_resp, func);
   }
 
-  sendInventoryReserveRollbackMessage(message: OrdersOutgoingMessage) {
+  sendInventoryReserveRollbackMessage(message: OrdersOutboxMessage) {
     this.channel.sendToQueue(
       this.inventory_reserve_rollback_queue,
-      Buffer.from(JSON.stringify(message)),
+      Buffer.from(JSON.stringify(message.toJSON())),
       {
         replyTo: this.inventory_reserve_rollback_queue_resp,
       },
@@ -63,10 +62,10 @@ export class RabbitMQService {
     );
   }
 
-  async sendShippingMessage(message: OrdersOutgoingMessage) {
+  async sendShippingMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.shipping_queue,
-      Buffer.from(JSON.stringify(message)),
+      Buffer.from(JSON.stringify(message.toJSON())),
       {
         replyTo: this.shipping_queue_resp,
       },
@@ -109,10 +108,10 @@ export class RabbitMQService {
     }
   }
 
-  sendInventoryDeleteMessage(message: OrdersOutgoingMessage) {
+  sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
     this.channel.sendToQueue(
       this.inventory_delete_queue,
-      Buffer.from(JSON.stringify(message)),
+      Buffer.from(JSON.stringify(message.toJSON())),
       {
         replyTo: this.inventory_delete_queue_resp,
       },
