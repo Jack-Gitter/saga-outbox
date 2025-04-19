@@ -104,7 +104,7 @@ export class OrdersService {
         product: order.product,
         quantity: order.quantity,
         orderId: order.id,
-      };
+      } satisfies OrdersOutgoingMessage;
     });
     orderData.forEach((data) => {
       const orchestrator = this.constructOrchestrator(data);
