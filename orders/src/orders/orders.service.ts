@@ -30,6 +30,12 @@ export class OrdersService {
         ORDERS_SAGA_STEP.RESERVE_INVENTORY,
       ]),
     );
+    this.rabbitMQ.registerSendInventoryDeleteMessageListener(
+      this.invokeSagaStepCallback(null, [
+        ORDERS_SAGA_STEP.PROCESS_SHIPPING,
+        ORDERS_SAGA_STEP.RESERVE_INVENTORY,
+      ]),
+    );
   }
   async initiateOrder(product: number, quantity: number) {
     await this.dataSource.transaction(async (entityManager) => {
