@@ -1,3 +1,4 @@
 export interface ISagaOrchestrator {
-  begin(): Promise<void>;
+  invokeNext(): Promise<void>;
+  compensate(): Promise<void>;
 }

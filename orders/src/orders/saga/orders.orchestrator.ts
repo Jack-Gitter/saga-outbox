@@ -5,18 +5,14 @@ import { ISagaStep } from 'src/saga/ISagaStep';
 @Injectable()
 export class OrdersSagaOrchestrator implements ISagaOrchestrator {
   constructor(private steps: ISagaStep[]) {}
+  currentStep = 0;
 
-  async begin(): Promise<void> {
-    const succeededSteps: ISagaStep[] = [];
-    try {
-      for (const step of this.steps) {
-        await step.invoke();
-        succeededSteps.push(step);
-      }
-    } catch {
-      await Promise.all(
-        succeededSteps.map(async (step) => await step.rollback()),
-      );
+  async invokeNext(): Promise<void> {
+    await this.steps[this.currentStep].invoke();
+  }
+  async compensate(): Promise<void> {
+    for (let i = 0; i < this.currentStep; i++) {
+      await this.steps[i].rollback();
     }
   }
 }
