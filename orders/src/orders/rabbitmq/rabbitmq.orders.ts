@@ -22,10 +22,14 @@ export class RabbitMQService {
       this.inventory_reserve_queue,
       Buffer.from(JSON.stringify({ product, quantity })),
     );
-    await this.channel.consume(
-      this.inventory_reserve_queue_resp,
-      this.handleResponse,
-    );
+    return new Promise((res) => {
+      this.channel.consume(
+        this.inventory_reserve_queue_resp,
+        (mes: amqp.Message) => {
+          res(this.handleResponse(mes));
+        },
+      );
+    });
   }
 
   async sendInventoryReserveRollbackMessage(product: number, quantity: number) {
@@ -33,10 +37,14 @@ export class RabbitMQService {
       this.inventory_reserve_rollback_queue,
       Buffer.from(JSON.stringify({ product, quantity })),
     );
-    await this.channel.consume(
-      this.inventory_reserve_rollback_queue_resp,
-      this.handleResponse,
-    );
+    return new Promise((res) => {
+      this.channel.consume(
+        this.inventory_reserve_rollback_queue_resp,
+        (mes: amqp.Message) => {
+          res(this.handleResponse(mes));
+        },
+      );
+    });
   }
 
   async sendShippingMessage(product: number, quantity: number) {
@@ -44,7 +52,11 @@ export class RabbitMQService {
       this.shipping_queue,
       Buffer.from(JSON.stringify({ product, quantity })),
     );
-    await this.channel.consume(this.shipping_queue_resp, this.handleResponse);
+    return new Promise((res) => {
+      this.channel.consume(this.shipping_queue_resp, (mes: amqp.Message) => {
+        res(this.handleResponse(mes));
+      });
+    });
   }
 
   async sendShippingRollbackMessage(product: number, quantity: number) {
@@ -52,10 +64,14 @@ export class RabbitMQService {
       this.shipping_rollback_queue,
       Buffer.from(JSON.stringify({ product, quantity })),
     );
-    await this.channel.consume(
-      this.shipping_rollback_queue_resp,
-      this.handleResponse,
-    );
+    return new Promise((res) => {
+      this.channel.consume(
+        this.shipping_rollback_queue_resp,
+        (mes: amqp.Message) => {
+          res(this.handleResponse(mes));
+        },
+      );
+    });
   }
 
   async sendInventoryDeleteMessage(product: number, quantity: number) {
@@ -63,10 +79,14 @@ export class RabbitMQService {
       this.inventory_delete_queue,
       Buffer.from(JSON.stringify({ product, quantity })),
     );
-    await this.channel.consume(
-      this.inventory_delete_queue_resp,
-      this.handleResponse,
-    );
+    return new Promise((res) => {
+      this.channel.consume(
+        this.inventory_delete_queue_resp,
+        (mes: amqp.Message) => {
+          res(this.handleResponse(mes));
+        },
+      );
+    });
   }
 
   private handleResponse(mes: amqp.Message) {
