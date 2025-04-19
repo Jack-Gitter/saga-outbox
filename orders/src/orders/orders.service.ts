@@ -23,7 +23,7 @@ export class OrdersService {
   onModuleInit() {
     this.pollOrderOutbox();
     this.rabbitMQ.registerInventoryReserveMessageResponseListener(
-      this.invokeSagaStepCallback(ORDERS_SAGA_STEP.PROCESS_SHIPPING),
+      this.invokeSagaActions(ORDERS_SAGA_STEP.PROCESS_SHIPPING),
     );
   }
   async initiateOrder(product: number, quantity: number) {
@@ -58,7 +58,10 @@ export class OrdersService {
     }, 5000);
   }
 
-  async invokeSagaStepCallback(step: ORDERS_SAGA_STEP) {
+  async invokeSagaStepCallback(
+    toInvoke: ORDERS_SAGA_STEP,
+    toRollback: ORDERS_SAGA_STEP[],
+  ) {
     return (message: Message) => {
       const response = JSON.parse(message.content.toString());
       const relatedSaga = this.runningSagas.get(response.id);
@@ -67,22 +70,11 @@ export class OrdersService {
           `No running saga is related to the most recent message recieved!`,
         );
       }
-      relatedSaga.invokeStep(step);
-    };
-  }
-
-  async rollbackSagaStepCallback(steps: ORDERS_SAGA_STEP[]) {
-    return (message: Message) => {
-      const response = JSON.parse(message.content.toString());
-      const relatedSaga = this.runningSagas.get(response.id);
-      if (!relatedSaga) {
-        throw new InternalServerErrorException(
-          `No running saga is related to the most recent message recieved!`,
-        );
+      if (response.successfull) {
+        relatedSaga.invokeStep(toInvoke);
+      } else {
+        toRollback.forEach((step) => relatedSaga.compensateStep(step));
       }
-      steps.forEach((step) => {
-        relatedSaga.compensateStep(step);
-      });
     };
   }
 
