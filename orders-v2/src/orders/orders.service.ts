@@ -12,7 +12,9 @@ export class OrdersService {
     @Inject(ORDERS_RMQ_CLIENT) private rmqClient: ClientProxy,
   ) {}
 
-  onModuleInit() {}
+  onModuleInit() {
+    this.pollOrderOutbox();
+  }
   async createPendingOrder(product: number, quantity: number) {
     await this.dataSource.transaction(async (entityManager) => {
       const orderRepo = entityManager.getRepository(Order);
