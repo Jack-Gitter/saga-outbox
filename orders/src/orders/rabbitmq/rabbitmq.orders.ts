@@ -45,7 +45,7 @@ export class RabbitMQService {
     );
   }
 
-  async sendInventoryReserveRollbackMessageListener() {}
+  async registerInventoryReserveRollbackMessageListener() {}
 
   async sendShippingMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
@@ -67,7 +67,7 @@ export class RabbitMQService {
     );
   }
 
-  async sendShippingRollbackMessageListener() {}
+  async registerSendShippingRollbackMessageListener() {}
 
   async sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
@@ -79,7 +79,7 @@ export class RabbitMQService {
     );
   }
 
-  async sendInventoryDeleteMessageListener() {}
+  async registerSendInventoryDeleteMessageListener() {}
 
   private handleResponse(mes: amqp.Message) {
     const content = JSON.parse(mes.content.toString());
