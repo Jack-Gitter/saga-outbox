@@ -29,12 +29,10 @@ export class RabbitMQService {
     );
   }
 
-  registerInventoryReserveMessageResponseListener(func: any) {
-    // when we get this message back, we need to call saga.invokeStep(SEND_SHIPPING_STEP)
-    this.channel.consume(
-      this.inventory_reserve_queue_resp,
-      func(ORDERS_SAGA_STEP.PROCESS_SHIPPING),
-    );
+  registerInventoryReserveMessageResponseListener(
+    func: (message: amqp.Message) => any,
+  ) {
+    this.channel.consume(this.inventory_reserve_queue_resp, func);
   }
 
   sendInventoryReserveRollbackMessage(message: OrdersOutboxMessage) {
@@ -47,9 +45,7 @@ export class RabbitMQService {
     );
   }
 
-  async registerInventoryReserveRollbackMessageListener(/*function*/) {
-    // call the callback function upon receipt of the message!
-  }
+  async registerInventoryReserveRollbackMessageListener() {}
 
   async sendShippingMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
@@ -61,7 +57,7 @@ export class RabbitMQService {
     );
   }
 
-  async registerSendShippingMessageHandler() {}
+  async registerSendShippingResponseHandler() {}
 
   sendShippingRollbackMessage(message: OrdersOutboxMessage) {
     this.channel.sendToQueue(

@@ -23,7 +23,12 @@ export class OrdersService {
   onModuleInit() {
     this.pollOrderOutbox();
     this.rabbitMQ.registerInventoryReserveMessageResponseListener(
-      this.invokeSagaActions(ORDERS_SAGA_STEP.PROCESS_SHIPPING),
+      this.invokeSagaStepCallback(ORDERS_SAGA_STEP.PROCESS_SHIPPING, []),
+    );
+    this.rabbitMQ.registerSendShippingResponseHandler(
+      this.invokeSagaStepCallback(ORDERS_SAGA_STEP.DELETE_INVENTORY, [
+        ORDERS_SAGA_STEP.RESERVE_INVENTORY,
+      ]),
     );
   }
   async initiateOrder(product: number, quantity: number) {
@@ -58,7 +63,7 @@ export class OrdersService {
     }, 5000);
   }
 
-  async invokeSagaStepCallback(
+  invokeSagaStepCallback(
     toInvoke: ORDERS_SAGA_STEP,
     toRollback: ORDERS_SAGA_STEP[],
   ) {
