@@ -17,7 +17,7 @@ export class OrdersSagaOrchestrator
     currentStep.invoke();
   }
 
-  compensate(step: ORDERS_SAGA_STEP): void {
+  compensateStep(step: ORDERS_SAGA_STEP): void {
     const currentStep = this.steps.get(step);
     if (!currentStep) {
       throw new InternalServerErrorException(`Invalid Step!`);
