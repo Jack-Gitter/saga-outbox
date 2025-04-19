@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as amqp from 'amqplib-as-promised';
 import { OrdersOutboxMessage } from '../orders.outbox.entity';
 
