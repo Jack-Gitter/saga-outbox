@@ -10,6 +10,7 @@ import { InventoryDeleteStep } from './saga/orders.inventory.delete.step';
 import { Message } from 'amqplib';
 import { ORDERS_SAGA_STEP } from './saga/orders.saga.enum';
 import { ISagaStep } from 'src/saga/ISagaStep';
+import { STATUS } from './orders.enums';
 
 @Injectable()
 export class OrdersService {
@@ -22,7 +23,7 @@ export class OrdersService {
     this.runningSagas = new Map();
   }
 
-  onModuleInit() {
+  async onModuleInit() {
     this.pollOrderOutbox();
     this.rabbitMQ.registerInventoryReserveMessageResponseListener(
       this.invokeSagaStepCallback(ORDERS_SAGA_STEP.PROCESS_SHIPPING, []),
@@ -41,8 +42,10 @@ export class OrdersService {
   }
   async initiateOrder(product: number, quantity: number) {
     await this.dataSource.transaction(async (entityManager) => {
-      await entityManager.save(new Order(product, quantity));
-      await entityManager.save(new OrdersOutboxMessage(product, quantity));
+      const order = await entityManager.save(new Order(product, quantity));
+      await entityManager.save(
+        new OrdersOutboxMessage(product, quantity, order.id),
+      );
     });
   }
 
@@ -57,7 +60,7 @@ export class OrdersService {
 
       const orchestrators = outboxMessages.map((message) => {
         const orchestrator = this.constructOrchestrator(message);
-        this.runningSagas.set(message.id, orchestrator);
+        this.runningSagas.set(message.orderId, orchestrator);
         return orchestrator;
       });
 
@@ -77,7 +80,7 @@ export class OrdersService {
   ) {
     return (message: Message) => {
       const response = JSON.parse(message.content.toString());
-      const relatedSaga = this.runningSagas.get(response.id);
+      const relatedSaga = this.runningSagas.get(response.orderId);
       if (!relatedSaga) {
         throw new InternalServerErrorException(
           `No running saga is related to the most recent message recieved!`,
@@ -91,7 +94,11 @@ export class OrdersService {
     };
   }
 
-  constructOrchestrator(message: OrdersOutboxMessage) {
+  constructOrchestrator(message: {
+    product: number;
+    quantity: number;
+    orderId: number;
+  }) {
     const reserveInventoryStep = new InventoryReserveStep(
       this.rabbitMQ,
       message,

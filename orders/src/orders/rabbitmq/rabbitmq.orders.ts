@@ -18,10 +18,10 @@ export class RabbitMQService {
     private shipping_rollback_queue_resp: string,
   ) {}
 
-  sendInventoryReserveMessage(message: OrdersOutboxMessage) {
+  sendInventoryReserveMessage(message: { product; quantity; orderId }) {
     this.channel.sendToQueue(
       this.inventory_reserve_queue,
-      Buffer.from(JSON.stringify(message.toJSON())),
+      Buffer.from(JSON.stringify(message)),
       {
         replyTo: this.inventory_reserve_queue_resp,
       },
@@ -34,10 +34,10 @@ export class RabbitMQService {
     this.channel.consume(this.inventory_reserve_queue_resp, func);
   }
 
-  sendInventoryReserveRollbackMessage(message: OrdersOutboxMessage) {
+  sendInventoryReserveRollbackMessage(message: { product; quantity; orderId }) {
     this.channel.sendToQueue(
       this.inventory_reserve_rollback_queue,
-      Buffer.from(JSON.stringify(message.toJSON())),
+      Buffer.from(JSON.stringify(message))),
       {
         replyTo: this.inventory_reserve_rollback_queue_resp,
       },
@@ -58,10 +58,10 @@ export class RabbitMQService {
     );
   }
 
-  async sendShippingMessage(message: OrdersOutboxMessage) {
+  async sendShippingMessage(message: { product; quantity; orderId }) {
     await this.channel.sendToQueue(
       this.shipping_queue,
-      Buffer.from(JSON.stringify(message.toJSON())),
+      Buffer.from(JSON.stringify(message)),
       {
         replyTo: this.shipping_queue_resp,
       },
@@ -74,10 +74,10 @@ export class RabbitMQService {
     this.channel.consume(this.shipping_queue_resp, func);
   }
 
-  sendShippingRollbackMessage(message: OrdersOutboxMessage) {
+  sendShippingRollbackMessage(message: { product; quantity; orderId }) {
     this.channel.sendToQueue(
       this.shipping_rollback_queue,
-      Buffer.from(JSON.stringify(message.toJSON())),
+      Buffer.from(JSON.stringify(message)),
       {
         replyTo: this.shipping_rollback_queue_resp,
       },
@@ -100,10 +100,10 @@ export class RabbitMQService {
     }
   }
 
-  sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
+  sendInventoryDeleteMessage(message: { product; quantity; orderId }) {
     this.channel.sendToQueue(
       this.inventory_delete_queue,
-      Buffer.from(JSON.stringify(message.toJSON())),
+      Buffer.from(JSON.stringify(message)),
       {
         replyTo: this.inventory_delete_queue_resp,
       },
