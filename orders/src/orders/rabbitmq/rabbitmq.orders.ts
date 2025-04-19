@@ -30,7 +30,7 @@ export class RabbitMQService {
   }
 
   registerInventoryReserveMessageResponseListener(
-    func: (message: amqp.Message) => any,
+    func: (message: amqp.Message) => void,
   ) {
     this.channel.consume(this.inventory_reserve_queue_resp, func);
   }
@@ -57,7 +57,11 @@ export class RabbitMQService {
     );
   }
 
-  async registerSendShippingResponseHandler() {}
+  async registerSendShippingResponseHandler(
+    func: (message: amqp.Message) => void,
+  ) {
+    this.channel.consume(this.shipping_queue_resp, func);
+  }
 
   sendShippingRollbackMessage(message: OrdersOutboxMessage) {
     this.channel.sendToQueue(
@@ -83,8 +87,10 @@ export class RabbitMQService {
     );
   }
 
-  async registerSendInventoryDeleteMessageListener() {
-    responseChannelMessageRouter();
+  async registerSendInventoryDeleteMessageListener(
+    func: (message: amqp.Message) => void,
+  ) {
+    this.channel.consume(this.inventory_delete_queue_resp, func);
     // call the callback function upon receipt of the message!
   }
 
