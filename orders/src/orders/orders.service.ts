@@ -66,6 +66,8 @@ export class OrdersService {
           await orchestrator.invokeStep(ORDERS_SAGA_STEP.RESERVE_INVENTORY);
         }),
       );
+
+      await orderOutboxRepository.remove(outboxMessages);
     }, 5000);
   }
 
