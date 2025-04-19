@@ -8,14 +8,12 @@ export class InventoryReserveStep implements ISagaStep {
     private message: OrdersOutboxMessage,
   ) {}
 
-  async invoke(): Promise<void> {
+  invoke(): void {
     console.debug('invoking inventory reserve step!');
-    await this.rabbitMQService.sendInventoryReserveMessage(this.message);
+    this.rabbitMQService.sendInventoryReserveMessage(this.message);
   }
-  async rollback(): Promise<void> {
+  rollback(): void {
     console.debug('invoking inventory reserve rollback!');
-    await this.rabbitMQService.sendInventoryReserveRollbackMessage(
-      this.message,
-    );
+    this.rabbitMQService.sendInventoryReserveRollbackMessage(this.message);
   }
 }

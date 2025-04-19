@@ -8,12 +8,12 @@ export class InventoryDeleteStep implements ISagaStep {
     private message: OrdersOutboxMessage,
   ) {}
 
-  async invoke(): Promise<void> {
+  invoke(): void {
     console.debug('invoking inventory delete step!');
-    await this.rabbitMQService.sendInventoryDeleteMessage(this.message);
+    this.rabbitMQService.sendInventoryDeleteMessage(this.message);
     // await this.rabbitMQService.waitForInventoryDeleteResponse(this.message)
   }
-  async rollback(): Promise<void> {
+  rollback(): void {
     console.debug('invoking inventory delete rollback!');
     console.debug('nothing to do, the last step in the saga');
   }

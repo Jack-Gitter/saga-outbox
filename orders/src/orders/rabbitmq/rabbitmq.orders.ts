@@ -18,8 +18,8 @@ export class RabbitMQService {
     private shipping_rollback_queue_resp: string,
   ) {}
 
-  async sendInventoryReserveMessage(message: OrdersOutboxMessage) {
-    await this.channel.sendToQueue(
+  sendInventoryReserveMessage(message: OrdersOutboxMessage) {
+    this.channel.sendToQueue(
       this.inventory_reserve_queue,
       Buffer.from(JSON.stringify(message.toJSON())),
       {
@@ -28,15 +28,15 @@ export class RabbitMQService {
     );
   }
 
-  async sendInventoryReserveMessageResponseListener() {
-    await this.channel.consume(
+  sendInventoryReserveMessageResponseListener() {
+    this.channel.consume(
       this.inventory_reserve_queue_resp,
       (message) => message,
     );
   }
 
-  async sendInventoryReserveRollbackMessage(message: OrdersOutboxMessage) {
-    await this.channel.sendToQueue(
+  sendInventoryReserveRollbackMessage(message: OrdersOutboxMessage) {
+    this.channel.sendToQueue(
       this.inventory_reserve_rollback_queue,
       Buffer.from(JSON.stringify(message.toJSON())),
       {
@@ -59,8 +59,8 @@ export class RabbitMQService {
     );
   }
 
-  async sendShippingRollbackMessage(message: OrdersOutboxMessage) {
-    await this.channel.sendToQueue(
+  sendShippingRollbackMessage(message: OrdersOutboxMessage) {
+    this.channel.sendToQueue(
       this.shipping_rollback_queue,
       Buffer.from(JSON.stringify(message.toJSON())),
       {
@@ -73,8 +73,8 @@ export class RabbitMQService {
     // call the callback function upon receipt of the message!
   }
 
-  async sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
-    await this.channel.sendToQueue(
+  sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
+    this.channel.sendToQueue(
       this.inventory_delete_queue,
       Buffer.from(JSON.stringify(message.toJSON())),
       {
