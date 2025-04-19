@@ -66,8 +66,6 @@ export class OrdersService {
           await orchestrator.invokeStep(ORDERS_SAGA_STEP.RESERVE_INVENTORY);
         }),
       );
-
-      await orderOutboxRepository.remove(outboxMessages);
     }, 5000);
   }
 
@@ -83,7 +81,7 @@ export class OrdersService {
           `No running saga is related to the most recent message recieved!`,
         );
       }
-      if (response.successfull) {
+      if (response.successfull && toInvoke) {
         relatedSaga.invokeStep(toInvoke);
       } else {
         toRollback.forEach((step) => relatedSaga.compensateStep(step));
