@@ -54,7 +54,7 @@ export class OrdersService {
     }, 5000);
   }
 
-  async setupResponseChannelMessageRouter(message: Message) {
+  async responseChannelMessageRouter(message: Message, step: ORDERS_SAGA_STEP) {
     const response = JSON.parse(message.content.toString());
     const relatedSaga = this.runningSagas.get(response.id);
     if (!relatedSaga) {
@@ -62,9 +62,7 @@ export class OrdersService {
         `No running saga is related to the most recent message recieved!`,
       );
     }
-    // listen on rabbitmq channels for response messages
-    // when we've been given a response message, check the messageID, and route it to the corresponding orchestrator
-    // either call invokeNext() or rollback(), depending on what type of message we get?
+    relatedSaga.invokeStep(step);
   }
 
   constructOrchestrator(message: OrdersOutboxMessage) {
