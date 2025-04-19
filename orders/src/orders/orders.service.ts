@@ -97,12 +97,16 @@ export class OrdersService {
   async createSagaFromPendingOrders() {
     const repo = this.dataSource.getRepository(Order);
     const pendingOrders = await repo.findBy({ status: STATUS.PENDING });
-    pendingOrders.map((order) => {
+    const orderData = pendingOrders.map((order) => {
       return {
         product: order.product,
         quantity: order.quantity,
         orderId: order.id,
       };
+    });
+    orderData.forEach((data) => {
+      const orchestrator = this.constructOrchestrator(data);
+      this.runningSagas.set(data.orderId, orchestrator);
     });
   }
 
