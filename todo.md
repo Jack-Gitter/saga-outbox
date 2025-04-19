@@ -1,1 +1,3 @@
-* right now there is a bug. If there is a message in the queue and we pause, then we send another message and two messages are in the db, sagas keep getting kicked off for them. we need to mark them as being processed somehow or something, so that we don't create multiple sagas for the same message!
+*  Add the last step, setting the order to confirmed status
+* Make sure that rabbitmq only sends an ack back after our callback is complete, and make sure that we're enqueuing the next step before ack is sent for prev step
+* run through the saga and verify that it is operating as expecteda
