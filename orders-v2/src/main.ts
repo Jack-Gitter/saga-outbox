@@ -9,7 +9,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: [`amqp://localhost:5672`],
-      queue: 'my_queue',
+      queue: 'orders_queue',
       queueOptions: { durable: false },
     },
   });

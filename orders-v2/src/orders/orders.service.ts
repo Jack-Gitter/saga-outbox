@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
+import { ClientProxy } from '@nestjs/microservices';
+import { ORDERS_RMQ_CLIENT } from './orders.symbols';
 
 @Injectable()
 export class OrdersService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    @Inject(ORDERS_RMQ_CLIENT) private rmqClient: ClientProxy,
+  ) {}
 
   onModuleInit() {}
   async createPendingOrder(product: number, quantity: number) {
@@ -32,7 +37,9 @@ export class OrdersService {
       console.debug('found messages!');
       console.debug(outboxMessages);
 
-      // rabbitmq send message
+      outboxMessages.forEach((message) => {
+        this.rmqClient.emit('INVENTORY_RESERVE', message.toJSON());
+      });
     }, 5000);
   }
 }
