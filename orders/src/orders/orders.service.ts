@@ -54,15 +54,17 @@ export class OrdersService {
     }, 5000);
   }
 
-  async responseChannelMessageRouter(message: Message, step: ORDERS_SAGA_STEP) {
-    const response = JSON.parse(message.content.toString());
-    const relatedSaga = this.runningSagas.get(response.id);
-    if (!relatedSaga) {
-      throw new InternalServerErrorException(
-        `No running saga is related to the most recent message recieved!`,
-      );
-    }
-    relatedSaga.invokeStep(step);
+  async responseChannelMessageRouter(step: ORDERS_SAGA_STEP) {
+    return (message: Message) => {
+      const response = JSON.parse(message.content.toString());
+      const relatedSaga = this.runningSagas.get(response.id);
+      if (!relatedSaga) {
+        throw new InternalServerErrorException(
+          `No running saga is related to the most recent message recieved!`,
+        );
+      }
+      relatedSaga.invokeStep(step);
+    };
   }
 
   constructOrchestrator(message: OrdersOutboxMessage) {
