@@ -11,6 +11,10 @@ export class RabbitMQService {
     private shipping_queue_resp: string,
     private inventory_delete_queue: string,
     private inventory_delete_queue_resp: string,
+    private inventory_reserve_rollback_queue: string,
+    private inventory_reserve_rollback_queue_resp: string,
+    private shipping_rollback_queue: string,
+    private shipping_rollback_queue_resp: string,
   ) {}
 
   async sendInventoryReserveMessage(product: number, quantity: number) {
@@ -25,7 +29,14 @@ export class RabbitMQService {
   }
 
   async sendInventoryReserveRollbackMessage(product: number, quantity: number) {
-    // TODO
+    await this.channel.sendToQueue(
+      this.inventory_reserve_rollback_queue,
+      Buffer.from(JSON.stringify({ product, quantity })),
+    );
+    await this.channel.consume(
+      this.inventory_reserve_rollback_queue_resp,
+      this.handleResponse,
+    );
   }
 
   async sendShippingMessage(product: number, quantity: number) {
@@ -37,7 +48,14 @@ export class RabbitMQService {
   }
 
   async sendShippingRollbackMessage(product: number, quantity: number) {
-    // TODO
+    await this.channel.sendToQueue(
+      this.shipping_rollback_queue,
+      Buffer.from(JSON.stringify({ product, quantity })),
+    );
+    await this.channel.consume(
+      this.shipping_rollback_queue_resp,
+      this.handleResponse,
+    );
   }
 
   async sendInventoryDeleteMessage(product: number, quantity: number) {
