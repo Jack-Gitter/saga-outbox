@@ -10,7 +10,6 @@ export class OrdersSagaOrchestrator implements ISagaOrchestrator {
     const succeededSteps: ISagaStep[] = [];
     try {
       for (const step of this.steps) {
-        console.debug('invoking step');
         await step.invoke();
         succeededSteps.push(step);
       }
