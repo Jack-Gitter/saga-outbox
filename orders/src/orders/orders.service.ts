@@ -9,6 +9,7 @@ import { ShippingStep } from './saga/orders.shipping.step';
 import { InventoryDeleteStep } from './saga/orders.inventory.delete.step';
 import { Message } from 'amqplib';
 import { ORDERS_SAGA_STEP } from './saga/orders.saga.enum';
+import { ISagaStep } from 'src/saga/ISagaStep';
 
 @Injectable()
 export class OrdersService {
@@ -75,10 +76,11 @@ export class OrdersService {
     const shippingStep = new ShippingStep(this.rabbitMQ, message);
     const deleteInventoryStep = new InventoryDeleteStep(this.rabbitMQ, message);
 
-    return new OrdersSagaOrchestrator([
-      reserveInventoryStep,
-      shippingStep,
-      deleteInventoryStep,
-    ]);
+    const steps = new Map<ORDERS_SAGA_STEP, ISagaStep>();
+    steps.set(ORDERS_SAGA_STEP.RESERVE_INVENTORY, reserveInventoryStep);
+    steps.set(ORDERS_SAGA_STEP.PROCESS_SHIPPING, shippingStep);
+    steps.set(ORDERS_SAGA_STEP.DELETE_INVENTORY, deleteInventoryStep);
+
+    return new OrdersSagaOrchestrator(steps);
   }
 }
