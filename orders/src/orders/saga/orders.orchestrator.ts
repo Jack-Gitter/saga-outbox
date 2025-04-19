@@ -4,7 +4,9 @@ import { ISagaStep } from 'src/saga/ISagaStep';
 import { ORDERS_SAGA_STEP } from './orders.saga.enum';
 
 @Injectable()
-export class OrdersSagaOrchestrator implements ISagaOrchestrator {
+export class OrdersSagaOrchestrator
+  implements ISagaOrchestrator<ORDERS_SAGA_STEP>
+{
   constructor(private steps: Map<ORDERS_SAGA_STEP, ISagaStep>) {}
   invokedSteps: ORDERS_SAGA_STEP[] = [];
 
