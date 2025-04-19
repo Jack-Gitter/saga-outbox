@@ -24,6 +24,7 @@ export class OrdersService {
   }
 
   async onModuleInit() {
+    await this.createSagaFromPendingOrders();
     this.pollOrderOutbox();
     this.rabbitMQ.registerInventoryReserveMessageResponseListener(
       this.invokeSagaStepCallback(ORDERS_SAGA_STEP.PROCESS_SHIPPING, []),
