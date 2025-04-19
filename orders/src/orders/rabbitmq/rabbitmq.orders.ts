@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as amqp from 'amqplib-as-promised';
 import { OrdersOutboxMessage } from '../orders.outbox.entity';
 
@@ -44,7 +44,19 @@ export class RabbitMQService {
     );
   }
 
-  async registerInventoryReserveRollbackMessageListener() {}
+  async registerInventoryReserveRollbackMessageListener() {
+    this.channel.consume(
+      this.inventory_reserve_rollback_queue_resp,
+      (message: amqp.Message) => {
+        const content = JSON.parse(message.content.toString());
+        if (!content.successful) {
+          console.debug(`Unable to roll back the inventory reserve step...`);
+        } else {
+          console.debug(`Successfully rolled back the reserve inventory step`);
+        }
+      },
+    );
+  }
 
   async sendShippingMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
@@ -72,7 +84,21 @@ export class RabbitMQService {
     );
   }
 
-  async registerSendShippingRollbackMessageListener() {}
+  async registerSendShippingRollbackMessageListener() {
+    {
+      this.channel.consume(
+        this.shipping_rollback_queue_resp,
+        (message: amqp.Message) => {
+          const content = JSON.parse(message.content.toString());
+          if (!content.successful) {
+            console.debug(`Unable to roll back the shipping step...`);
+          } else {
+            console.debug(`Rolled back the shipping step`);
+          }
+        },
+      );
+    }
+  }
 
   sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
     this.channel.sendToQueue(
