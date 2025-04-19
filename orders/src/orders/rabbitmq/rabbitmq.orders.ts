@@ -26,14 +26,6 @@ export class RabbitMQService {
         replyTo: this.inventory_reserve_queue_resp,
       },
     );
-    return new Promise((res) => {
-      this.channel.consume(
-        this.inventory_reserve_queue_resp,
-        (mes: amqp.Message) => {
-          res(this.handleResponse(mes));
-        },
-      );
-    });
   }
 
   async sendInventoryReserveRollbackMessage(message: OrdersOutboxMessage) {
@@ -44,14 +36,6 @@ export class RabbitMQService {
         replyTo: this.inventory_reserve_rollback_queue_resp,
       },
     );
-    return new Promise((res) => {
-      this.channel.consume(
-        this.inventory_reserve_rollback_queue_resp,
-        (mes: amqp.Message) => {
-          res(this.handleResponse(mes));
-        },
-      );
-    });
   }
 
   async sendShippingMessage(message: OrdersOutboxMessage) {
@@ -62,11 +46,6 @@ export class RabbitMQService {
         replyTo: this.shipping_queue_resp,
       },
     );
-    return new Promise((res) => {
-      this.channel.consume(this.shipping_queue_resp, (mes: amqp.Message) => {
-        res(this.handleResponse(mes));
-      });
-    });
   }
 
   async sendShippingRollbackMessage(message: OrdersOutboxMessage) {
@@ -77,14 +56,6 @@ export class RabbitMQService {
         replyTo: this.shipping_rollback_queue_resp,
       },
     );
-    return new Promise((res) => {
-      this.channel.consume(
-        this.shipping_rollback_queue_resp,
-        (mes: amqp.Message) => {
-          res(this.handleResponse(mes));
-        },
-      );
-    });
   }
 
   async sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
@@ -95,14 +66,6 @@ export class RabbitMQService {
         replyTo: this.inventory_delete_queue_resp,
       },
     );
-    return new Promise((res) => {
-      this.channel.consume(
-        this.inventory_delete_queue_resp,
-        (mes: amqp.Message) => {
-          res(this.handleResponse(mes));
-        },
-      );
-    });
   }
 
   private handleResponse(mes: amqp.Message) {

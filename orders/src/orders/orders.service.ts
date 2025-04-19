@@ -10,6 +10,7 @@ import { InventoryDeleteStep } from './saga/orders.inventory.delete.step';
 
 @Injectable()
 export class OrdersService {
+  private runningSagas: [];
   constructor(
     private dataSource: DataSource,
     private rabbitMQ: RabbitMQService,
