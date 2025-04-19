@@ -11,6 +11,7 @@ import { Message } from 'amqplib';
 import { ORDERS_SAGA_STEP } from './saga/orders.saga.enum';
 import { ISagaStep } from 'src/saga/ISagaStep';
 import { STATUS } from './orders.enums';
+import { OrdersOutgoingMessage } from './orders.types';
 
 @Injectable()
 export class OrdersService {
@@ -60,7 +61,7 @@ export class OrdersService {
       console.debug(outboxMessages);
 
       const orchestrators = outboxMessages.map((message) => {
-        const orchestrator = this.constructOrchestrator(message);
+        const orchestrator = this.constructOrchestrator(message.toJSON());
         this.runningSagas.set(message.orderId, orchestrator);
         return orchestrator;
       });
@@ -111,11 +112,7 @@ export class OrdersService {
     });
   }
 
-  constructOrchestrator(message: {
-    product: number;
-    quantity: number;
-    orderId: number;
-  }) {
+  constructOrchestrator(message: OrdersOutgoingMessage) {
     const reserveInventoryStep = new InventoryReserveStep(
       this.rabbitMQ,
       message.product,

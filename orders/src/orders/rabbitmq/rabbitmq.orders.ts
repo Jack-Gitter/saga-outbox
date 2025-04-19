@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as amqp from 'amqplib-as-promised';
 import { OrdersOutboxMessage } from '../orders.outbox.entity';
+import { OrdersOutgoingMessage } from '../orders.types';
 
 Injectable();
 export class RabbitMQService {
@@ -38,11 +39,7 @@ export class RabbitMQService {
     this.channel.consume(this.inventory_reserve_queue_resp, func);
   }
 
-  sendInventoryReserveRollbackMessage(message: {
-    product: number;
-    quantity: number;
-    orderId: number;
-  }) {
+  sendInventoryReserveRollbackMessage(message: OrdersOutgoingMessage) {
     this.channel.sendToQueue(
       this.inventory_reserve_rollback_queue,
       Buffer.from(JSON.stringify(message)),
@@ -66,11 +63,7 @@ export class RabbitMQService {
     );
   }
 
-  async sendShippingMessage(message: {
-    product: number;
-    quantity: number;
-    orderId: number;
-  }) {
+  async sendShippingMessage(message: OrdersOutgoingMessage) {
     await this.channel.sendToQueue(
       this.shipping_queue,
       Buffer.from(JSON.stringify(message)),
@@ -116,11 +109,7 @@ export class RabbitMQService {
     }
   }
 
-  sendInventoryDeleteMessage(message: {
-    product: number;
-    quantity: number;
-    orderId: number;
-  }) {
+  sendInventoryDeleteMessage(message: OrdersOutgoingMessage) {
     this.channel.sendToQueue(
       this.inventory_delete_queue,
       Buffer.from(JSON.stringify(message)),
