@@ -17,6 +17,10 @@ const providers: Provider[] = [
       const channel = await connection.createChannel();
       await channel.assertQueue(inventory_reserve_queue);
       await channel.assertQueue(shipping_queue);
+      await channel.assertQueue(inventory_reserve_queue_resp);
+      await channel.assertQueue(shipping_queue_resp);
+      await channel.assertQueue(inventory_delete_queue);
+      await channel.assertQueue(inventory_reserve_queue_resp);
       return new RabbitMQService(
         channel,
         inventory_reserve_queue,
