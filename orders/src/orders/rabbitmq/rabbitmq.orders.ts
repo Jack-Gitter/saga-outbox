@@ -29,7 +29,7 @@ export class RabbitMQService {
     );
   }
 
-  sendInventoryReserveMessageResponseListener(func: any) {
+  registerInventoryReserveMessageResponseListener(func: any) {
     // when we get this message back, we need to call saga.invokeStep(SEND_SHIPPING_STEP)
     this.channel.consume(
       this.inventory_reserve_queue_resp,
