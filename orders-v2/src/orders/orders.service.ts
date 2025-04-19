@@ -40,6 +40,8 @@ export class OrdersService {
       outboxMessages.forEach((message) => {
         this.rmqClient.emit('INVENTORY_RESERVE', message.toJSON());
       });
+
+      await orderOutboxRepo.remove(outboxMessages);
     }, 5000);
   }
 }
