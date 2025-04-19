@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as amqp from 'amqplib-as-promised';
 import { OrdersOutboxMessage } from '../orders.outbox.entity';
-import { ORDERS_SAGA_STEP } from '../saga/orders.saga.enum';
 
 Injectable();
 export class RabbitMQService {
@@ -73,9 +72,7 @@ export class RabbitMQService {
     );
   }
 
-  async registerSendShippingRollbackMessageListener() {
-    // call the callback function upon receipt of the message!
-  }
+  async registerSendShippingRollbackMessageListener() {}
 
   sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
     this.channel.sendToQueue(
@@ -91,7 +88,6 @@ export class RabbitMQService {
     func: (message: amqp.Message) => void,
   ) {
     this.channel.consume(this.inventory_delete_queue_resp, func);
-    // call the callback function upon receipt of the message!
   }
 
   private handleResponse(mes: amqp.Message) {
