@@ -26,6 +26,7 @@ const providers: Provider[] = [
       await channel.assertQueue(inventory_reserve_queue_resp);
       await channel.assertQueue(shipping_queue_resp);
       await channel.assertQueue(inventory_delete_queue);
+      await channel.assertQueue(inventory_delete_queue_resp);
       await channel.assertQueue(inventory_reserve_queue_resp);
       await channel.assertQueue(inventory_reserve_rollback_queue);
       await channel.assertQueue(inventory_reserve_rollback_queue_resp);
