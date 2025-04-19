@@ -18,7 +18,9 @@ export class OrdersService {
   constructor(
     private dataSource: DataSource,
     private rabbitMQ: RabbitMQService,
-  ) {}
+  ) {
+    this.runningSagas = new Map();
+  }
 
   onModuleInit() {
     this.pollOrderOutbox();
