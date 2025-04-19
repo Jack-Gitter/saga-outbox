@@ -10,6 +10,7 @@ export class OrdersSagaOrchestrator implements ISagaOrchestrator {
   async invokeNext(): Promise<void> {
     await this.steps[this.currentStep].invoke();
   }
+
   async compensate(): Promise<void> {
     for (let i = 0; i < this.currentStep; i++) {
       await this.steps[i].rollback();

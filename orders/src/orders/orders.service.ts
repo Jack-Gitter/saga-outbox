@@ -10,7 +10,8 @@ import { InventoryDeleteStep } from './saga/orders.inventory.delete.step';
 
 @Injectable()
 export class OrdersService {
-  private runningSagas: [];
+  private runningSagas: Map<number, OrdersSagaOrchestrator>;
+
   constructor(
     private dataSource: DataSource,
     private rabbitMQ: RabbitMQService,
@@ -35,18 +36,25 @@ export class OrdersService {
       console.debug('found messages!');
       console.debug(outboxMessages);
 
-      const orchestrators = outboxMessages.map((message) =>
-        this.constructOrchestrator(message),
-      );
+      const orchestrators = outboxMessages.map((message) => {
+        const orchestrator = this.constructOrchestrator(message);
+        this.runningSagas.set(message.id, orchestrator);
+        return orchestrator;
+      });
 
       await Promise.all(
         orchestrators.map(async (orchestrator) => {
-          await orchestrator.begin();
+          await orchestrator.invokeNext();
         }),
       );
 
       await orderOutboxRepository.remove(outboxMessages);
     }, 5000);
+  }
+
+  async setupResponseChannelMessageRouter() {
+    // listen on rabbitmq channels for response messages
+    // when we've been given a response message, check the messageID, and route it to the corresponding queue
   }
 
   constructOrchestrator(message: OrdersOutboxMessage) {

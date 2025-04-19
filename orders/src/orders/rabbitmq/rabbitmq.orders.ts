@@ -28,6 +28,13 @@ export class RabbitMQService {
     );
   }
 
+  async sendInventoryReserveMessageResponseListener() {
+    await this.channel.consume(
+      this.inventory_reserve_queue_resp,
+      (message) => message,
+    );
+  }
+
   async sendInventoryReserveRollbackMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.inventory_reserve_rollback_queue,
@@ -37,6 +44,8 @@ export class RabbitMQService {
       },
     );
   }
+
+  async sendInventoryReserveRollbackMessageListener() {}
 
   async sendShippingMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
@@ -58,6 +67,8 @@ export class RabbitMQService {
     );
   }
 
+  async sendShippingRollbackMessageListener() {}
+
   async sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.inventory_delete_queue,
@@ -67,6 +78,8 @@ export class RabbitMQService {
       },
     );
   }
+
+  async sendInventoryDeleteMessageListener() {}
 
   private handleResponse(mes: amqp.Message) {
     const content = JSON.parse(mes.content.toString());
