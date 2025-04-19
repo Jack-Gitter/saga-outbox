@@ -54,7 +54,8 @@ export class OrdersService {
 
   async setupResponseChannelMessageRouter() {
     // listen on rabbitmq channels for response messages
-    // when we've been given a response message, check the messageID, and route it to the corresponding queue
+    // when we've been given a response message, check the messageID, and route it to the corresponding orchestrator
+    // either call invokeNext() or rollback(), depending on what type of message we get?
   }
 
   constructOrchestrator(message: OrdersOutboxMessage) {
