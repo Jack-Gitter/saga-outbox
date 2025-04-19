@@ -9,12 +9,10 @@ export class ShippingStep implements ISagaStep {
   ) {}
   async invoke(): Promise<void> {
     console.debug('invoking shipping step!');
-    await this.rabbitMQService.sendShippingMessage(this.message.toJSON());
+    await this.rabbitMQService.sendShippingMessage(this.message);
   }
   async rollback(): Promise<void> {
     console.debug('invoking shipping rollback!');
-    await this.rabbitMQService.sendShippingRollbackMessage(
-      this.message.toJSON(),
-    );
+    await this.rabbitMQService.sendShippingRollbackMessage(this.message);
   }
 }

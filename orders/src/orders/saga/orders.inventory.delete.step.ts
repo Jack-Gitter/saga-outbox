@@ -10,9 +10,7 @@ export class InventoryDeleteStep implements ISagaStep {
 
   async invoke(): Promise<void> {
     console.debug('invoking inventory delete step!');
-    await this.rabbitMQService.sendInventoryDeleteMessage(
-      this.message.toJSON(),
-    );
+    await this.rabbitMQService.sendInventoryDeleteMessage(this.message);
   }
   async rollback(): Promise<void> {
     console.debug('invoking inventory delete rollback!');

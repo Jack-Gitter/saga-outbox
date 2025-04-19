@@ -21,7 +21,7 @@ export class RabbitMQService {
   async sendInventoryReserveMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.inventory_reserve_queue,
-      Buffer.from(JSON.stringify(message)),
+      Buffer.from(JSON.stringify(message.toJSON())),
     );
     return new Promise((res) => {
       this.channel.consume(
@@ -36,7 +36,7 @@ export class RabbitMQService {
   async sendInventoryReserveRollbackMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.inventory_reserve_rollback_queue,
-      Buffer.from(JSON.stringify(message)),
+      Buffer.from(JSON.stringify(message.toJSON())),
     );
     return new Promise((res) => {
       this.channel.consume(
@@ -51,7 +51,7 @@ export class RabbitMQService {
   async sendShippingMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.shipping_queue,
-      Buffer.from(JSON.stringify(message)),
+      Buffer.from(JSON.stringify(message.toJSON())),
     );
     return new Promise((res) => {
       this.channel.consume(this.shipping_queue_resp, (mes: amqp.Message) => {
@@ -63,7 +63,7 @@ export class RabbitMQService {
   async sendShippingRollbackMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.shipping_rollback_queue,
-      Buffer.from(JSON.stringify(message)),
+      Buffer.from(JSON.stringify(message.toJSON())),
     );
     return new Promise((res) => {
       this.channel.consume(
@@ -78,7 +78,7 @@ export class RabbitMQService {
   async sendInventoryDeleteMessage(message: OrdersOutboxMessage) {
     await this.channel.sendToQueue(
       this.inventory_delete_queue,
-      Buffer.from(JSON.stringify(message)),
+      Buffer.from(JSON.stringify(message.toJSON())),
     );
     return new Promise((res) => {
       this.channel.consume(
