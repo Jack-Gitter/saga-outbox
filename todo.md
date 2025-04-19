@@ -1,4 +1,1 @@
-* set up the DTO and http endpoint for posting an order
-* set up rabbitmq in orders application
-* create the saga itself which is going to be comprised of saga steps
-* run the saga for each order that we pick up when we process the outbox
+* right now there is a bug. If there is a message in the queue and we pause, then we send another message and two messages are in the db, sagas keep getting kicked off for them. we need to mark them as being processed somehow or something, so that we don't create multiple sagas for the same message!
