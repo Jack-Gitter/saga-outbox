@@ -23,8 +23,11 @@ export class OrdersSagaOrchestrator implements ISagaOrchestrator {
   }
 
   async compensate(): Promise<void> {
-    for (let i = 0; i < this.currentStep; i++) {
-      await this.steps[i].rollback();
-    }
+    const executedSteps = this.invokedSteps.map((invoked) => {
+      return this.steps.get(invoked);
+    });
+    executedSteps.forEach((step) => {
+      step.rollback();
+    });
   }
 }
