@@ -1,14 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ISagaOrchestrator } from 'src/saga/ISagaOrchestrator';
 import { ISagaStep } from 'src/saga/ISagaStep';
 
 @Injectable()
 export class OrdersSagaOrchestrator implements ISagaOrchestrator {
   constructor(private steps: ISagaStep[]) {}
-  currentStep = 0;
+  mostRecentInvokedStep = -1;
 
-  async invokeNext(): Promise<void> {
-    await this.steps[this.currentStep].invoke();
+  async invokeStep(stepNumber: number): Promise<void> {
+    if (stepNumber >= this.steps.length) {
+      throw new InternalServerErrorException(
+        `No more steps of saga to invoke!`,
+      );
+    }
+    this.mostRecentInvokedStep = stepNumber;
+    await this.steps[stepNumber].invoke();
   }
 
   async compensate(): Promise<void> {

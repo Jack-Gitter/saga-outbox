@@ -1,4 +1,4 @@
 export interface ISagaOrchestrator {
-  invokeNext(): Promise<void>;
+  invokeStep(stepNumber: number): Promise<void>;
   compensate(): Promise<void>;
 }

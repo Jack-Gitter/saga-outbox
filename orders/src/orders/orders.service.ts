@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
@@ -7,6 +7,7 @@ import { InventoryReserveStep } from './saga/orders.inventory.reserve.step';
 import { RabbitMQService } from './rabbitmq/rabbitmq.orders';
 import { ShippingStep } from './saga/orders.shipping.step';
 import { InventoryDeleteStep } from './saga/orders.inventory.delete.step';
+import { Message } from 'amqplib';
 
 @Injectable()
 export class OrdersService {
@@ -44,7 +45,7 @@ export class OrdersService {
 
       await Promise.all(
         orchestrators.map(async (orchestrator) => {
-          await orchestrator.invokeNext();
+          await orchestrator.invokeStep(0);
         }),
       );
 
@@ -52,7 +53,14 @@ export class OrdersService {
     }, 5000);
   }
 
-  async setupResponseChannelMessageRouter() {
+  async setupResponseChannelMessageRouter(message: Message) {
+    const response = JSON.parse(message.content.toString());
+    const relatedSaga = this.runningSagas.get(response.id);
+    if (!relatedSaga) {
+      throw new InternalServerErrorException(
+        `No running saga is related to the most recent message recieved!`,
+      );
+    }
     // listen on rabbitmq channels for response messages
     // when we've been given a response message, check the messageID, and route it to the corresponding orchestrator
     // either call invokeNext() or rollback(), depending on what type of message we get?
