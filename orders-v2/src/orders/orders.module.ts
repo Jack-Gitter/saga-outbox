@@ -12,6 +12,7 @@ import { ORDERS_RMQ_CLIENT } from './orders.symbols';
         transport: Transport.RMQ,
         options: {
           queue: 'orders_queue',
+          queueOptions: { durable: false },
         },
       },
     ]),
