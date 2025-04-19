@@ -8,6 +8,7 @@ import { RabbitMQService } from './rabbitmq/rabbitmq.orders';
 import { ShippingStep } from './saga/orders.shipping.step';
 import { InventoryDeleteStep } from './saga/orders.inventory.delete.step';
 import { Message } from 'amqplib';
+import { ORDERS_SAGA_STEP } from './saga/orders.saga.enum';
 
 @Injectable()
 export class OrdersService {
@@ -45,7 +46,7 @@ export class OrdersService {
 
       await Promise.all(
         orchestrators.map(async (orchestrator) => {
-          await orchestrator.invokeStep(0);
+          await orchestrator.invokeStep(ORDERS_SAGA_STEP.RESERVE_INVENTORY);
         }),
       );
 
