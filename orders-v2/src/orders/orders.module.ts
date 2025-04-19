@@ -7,7 +7,13 @@ import { ORDERS_RMQ_CLIENT } from './orders.symbols';
 @Module({
   imports: [
     ClientsModule.register([
-      { name: ORDERS_RMQ_CLIENT, transport: Transport.RMQ },
+      {
+        name: ORDERS_RMQ_CLIENT,
+        transport: Transport.RMQ,
+        options: {
+          queue: 'orders_queue',
+        },
+      },
     ]),
   ],
   controllers: [OrdersController],
