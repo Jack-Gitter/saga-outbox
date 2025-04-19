@@ -1,4 +1,38 @@
 import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { Order } from './orders.entity';
+import { OrdersOutboxMessage } from './orders.outbox.entity';
 
 @Injectable()
-export class OrdersService {}
+export class OrdersService {
+  constructor(private dataSource: DataSource) {}
+
+  onModuleInit() {}
+  async createPendingOrder(product: number, quantity: number) {
+    await this.dataSource.transaction(async (entityManager) => {
+      const orderRepo = entityManager.getRepository(Order);
+      const orderOutboxRepo = entityManager.getRepository(OrdersOutboxMessage);
+      const order = new Order(product, quantity);
+      const savedOrder = await orderRepo.save(order);
+      const outboxMessage = new OrdersOutboxMessage(
+        product,
+        quantity,
+        savedOrder.id,
+      );
+      await orderOutboxRepo.save(outboxMessage);
+    });
+  }
+
+  async pollOrderOutbox() {
+    setInterval(async () => {
+      const orderOutboxRepo =
+        this.dataSource.getRepository(OrdersOutboxMessage);
+      const outboxMessages = await orderOutboxRepo.find();
+
+      console.debug('found messages!');
+      console.debug(outboxMessages);
+
+      // rabbitmq send message
+    }, 5000);
+  }
+}
