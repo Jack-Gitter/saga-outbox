@@ -1,10 +1,22 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Order } from './orders/orders.entity';
+import { OrdersOutboxMessage } from './orders/orders.outbox.entity';
+import { OrdersController } from './orders/orders.controller';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 1000,
+      username: 'postgres',
+      password: 'postgres',
+      database: 'postgres',
+      entities: [Order, OrdersOutboxMessage],
+    }),
+    OrdersModule,
+  ],
 })
 export class AppModule {}
