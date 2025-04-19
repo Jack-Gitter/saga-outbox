@@ -1,12 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ISagaOrchestrator } from 'src/saga/ISagaOrchestrator';
 import { ISagaStep } from 'src/saga/ISagaStep';
-
-export enum ORDERS_SAGA_STEP {
-  RESERVE_INVENTORY,
-  PROCESS_SHIPPING,
-  DELETE_INVENTORY,
-}
+import { ORDERS_SAGA_STEP } from './orders.saga.enum';
 
 @Injectable()
 export class OrdersSagaOrchestrator implements ISagaOrchestrator {
