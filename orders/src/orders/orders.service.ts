@@ -49,6 +49,8 @@ export class OrdersService {
   }
 
   async handleInventoryReserveResponse(mes: MessageResponse) {
+    console.debug(`Handling inventory reserve response message!`);
+    console.debug(mes);
     const orderRepo = this.dataSource.getRepository(Order);
     if (!mes.successful) {
       console.debug(`Could not reserve inventory`);
@@ -71,6 +73,8 @@ export class OrdersService {
   }
 
   async handleShippingValidationResponse(mes: MessageResponse) {
+    console.debug(`Handling shipping validation response message!`);
+    console.debug(mes);
     try {
       const orderRepo = this.dataSource.getRepository(Order);
       const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
@@ -96,6 +100,8 @@ export class OrdersService {
   }
 
   async handleInventoryRemoveResponse(mes: MessageResponse) {
+    console.debug(`Handling inventory remove response message!`);
+    console.debug(mes);
     try {
       const orderRepo = this.dataSource.getRepository(Order);
       const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
