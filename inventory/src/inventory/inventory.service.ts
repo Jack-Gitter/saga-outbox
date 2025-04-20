@@ -59,7 +59,7 @@ export class InventoryService {
       const inventoryRemoveInboxRepo = entityManager.getRepository(
         InventoryRemoveInboxMessageEntity,
       );
-      const existingMessage = await inventoryReservationRepo.findOneBy({
+      const existingMessage = await inventoryRemoveInboxRepo.findOneBy({
         id: message.orderId,
       });
 
