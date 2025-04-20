@@ -12,21 +12,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: my-rabbitmq
-    ports:
-      - "5672:5672"   
-      - "15672:15672" 
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    restart: unless-stopped
-
 volumes:
   postgres_data:
-    driver: local
-  rabbitmq_data:
     driver: local
