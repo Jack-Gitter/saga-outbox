@@ -17,13 +17,16 @@ export class InventoryService {
         return;
       }
       const inboxMessage = new InventoryInboxMessage(message.orderId);
-      inboxRepo.save(inboxMessage);
+      await inboxRepo.save(inboxMessage);
 
       const inventoryReservation = new InventoryReservation(
         message.orderId,
         message.product,
         message.quantity,
       );
+
+      const reservationRepo = entityManager.getRepository(InventoryReservation);
+      await reservationRepo.save(inventoryReservation);
     });
   }
 }
