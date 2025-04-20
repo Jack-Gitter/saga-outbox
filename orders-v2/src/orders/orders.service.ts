@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
 import { RMQService } from './rmq/rmq.service';
+import { MessageResponse } from './orders.types';
 
 @Injectable()
 export class OrdersService {
@@ -44,5 +45,11 @@ export class OrdersService {
 
       await orderOutboxRepo.remove(outboxMessages);
     }, 5000);
+  }
+
+  async handleInventoryReserveResponse(mes: MessageResponse) {
+    if (!mes.successful) {
+      console.debug(`Could not reserve inventory`);
+    }
   }
 }

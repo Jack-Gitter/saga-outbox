@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Channel } from 'amqplib-as-promised/lib';
+import { Channel, Message } from 'amqplib-as-promised/lib';
 import { OrdersOutboxMessage } from '../orders.outbox.entity';
 import { INVENTORY_RESERVE } from '../orders.symbols';
+import { INVENTORY_RESERVE_RESPONSE } from './rmq.types';
+import { MessageResponse } from '../orders.types';
 
 @Injectable()
 export class RMQService {
@@ -12,5 +14,18 @@ export class RMQService {
       INVENTORY_RESERVE,
       Buffer.from(JSON.stringify(mes.toJSON())),
     );
+  }
+
+  registerInventoryReserveMessageResponseHandler(
+    fun: (messageResponse: MessageResponse) => unknown,
+  ) {
+    this.channel.consume(INVENTORY_RESERVE_RESPONSE, (mes: Message) => {
+      const contents = JSON.parse(mes.content.toString());
+      const messageResponse: MessageResponse = {
+        successful: contents.successful,
+        orderId: contents.orderId,
+      };
+      fun(messageResponse);
+    });
   }
 }
