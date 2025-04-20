@@ -53,7 +53,6 @@ export class OrdersService {
       console.debug(`Could not reserve inventory`);
       await orderRepo.delete({ id: mes.orderId });
     }
-
     const order = await orderRepo.findOneBy({ id: mes.orderId });
     const outboxMessage = new OrdersOutboxMessage(
       order.product,
