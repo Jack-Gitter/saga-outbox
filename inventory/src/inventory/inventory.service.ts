@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { InventoryReserveInboxMessage } from './rmq/rmq.types';
 import { InventoryReserveInboxMessageEntity } from './inventory.reserve.inbox.message.entity';
 import { InventoryReservation } from './inventory.entity';
-import { InventoryReserveOutboxMessage } from './inventory.reserve.outbox.message.entity';
+import { InventoryReserveOutboxMessageEntity } from './inventory.reserve.outbox.message.entity';
 import { RMQService } from './rmq/rmq.service';
 
 @Injectable()
@@ -39,9 +39,9 @@ export class InventoryService {
       const successful = res.identifiers.length > 0;
 
       const outboxRepo = entityManager.getRepository(
-        InventoryReserveOutboxMessage,
+        InventoryReserveOutboxMessageEntity,
       );
-      const outboxMessage = new InventoryReserveOutboxMessage(
+      const outboxMessage = new InventoryReserveOutboxMessageEntity(
         message.orderId,
         successful,
       );
@@ -51,7 +51,7 @@ export class InventoryService {
 
   async pollOutbox() {
     const reserveOutboxRepo = this.dataSource.getRepository(
-      InventoryReserveOutboxMessage,
+      InventoryReserveOutboxMessageEntity,
     );
     const messages = await reserveOutboxRepo.find();
 

@@ -5,7 +5,7 @@ import {
   INVENTORY_RESERVE_RESP,
   InventoryReserveInboxMessage,
 } from './rmq.types';
-import { InventoryReserveOutboxMessage } from '../inventory.reserve.outbox.message.entity';
+import { InventoryReserveOutboxMessageEntity } from '../inventory.reserve.outbox.message.entity';
 
 @Injectable()
 export class RMQService {
@@ -24,7 +24,9 @@ export class RMQService {
     });
   }
 
-  async sendInventoryReserveResponse(message: InventoryReserveOutboxMessage) {
+  async sendInventoryReserveResponse(
+    message: InventoryReserveOutboxMessageEntity,
+  ) {
     this.channel.sendToQueue(
       INVENTORY_RESERVE_RESP,
       Buffer.from(JSON.stringify(message.toJSON())),
