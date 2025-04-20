@@ -14,14 +14,19 @@ export class RMQService {
   async registerInventoryReserveMessageHandler(
     fun: (message: InventoryReserveInboxMessage) => Promise<void>,
   ) {
-    await this.channel.consume(INVENTORY_RESERVE, async (mes: Message) => {
-      const content = JSON.parse(mes.content.toString());
-      await fun({
-        orderId: content.orderId,
-        product: content.product,
-        quantity: content.quantity,
-      });
-    });
+    await this.channel.consume(
+      INVENTORY_RESERVE,
+      async (mes: Message) => {
+        const content = JSON.parse(mes.content.toString());
+        await fun({
+          orderId: content.orderId,
+          product: content.product,
+          quantity: content.quantity,
+        });
+        this.channel.ack(mes);
+      },
+      { noAck: false },
+    );
   }
 
   async sendInventoryReserveResponse(
