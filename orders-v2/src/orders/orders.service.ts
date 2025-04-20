@@ -12,10 +12,10 @@ export class OrdersService {
     private rmqService: RMQService,
   ) {}
 
-  async onModuleInit() {
+  async onApplicationBootstrap() {
     await this.pollOrderOutbox();
     await this.rmqService.registerInventoryReserveMessageResponseHandler(
-      this.handleInventoryReserveResponse,
+      this.handleInventoryReserveResponse.bind(this),
     );
   }
   async createPendingOrder(product: number, quantity: number) {
