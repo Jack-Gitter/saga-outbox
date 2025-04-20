@@ -8,7 +8,15 @@ export class InventoryService {
   constructor(private dataSource: DataSource) {}
 
   async handleInventoryReserveMessage(message: InventoryReserveMessage) {
-    const inboxRepo = this.dataSource.getRepository(InventoryInboxMessage);
-    const inboxMessage = new InventoryInboxMessage(message.orderId);
+    this.dataSource.transaction((entityManager) => {
+      const inboxRepo = entityManager.getRepository(InventoryInboxMessage);
+      const existingMessage = inboxRepo.findOneBy({ id: message.orderId });
+      if (existingMessage) {
+        console.debug(`already handled this message!`);
+        return;
+      }
+      const inboxMessage = new InventoryInboxMessage(message.orderId);
+      await inboxRepo.save(inboxMessage);
+    });
   }
 }
