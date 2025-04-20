@@ -74,50 +74,68 @@ export class OrdersService {
       await orderRepo.delete({ id: mes.orderId });
       return;
     }
-    const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
-    const outboxMessage = new OrdersOutboxMessage(
-      order.product,
-      order.quantity,
-      order.id,
-    );
-    await this.rmqService.sendShippingValidationMessage(outboxMessage);
+    try {
+      const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
+      const outboxMessage = new OrdersOutboxMessage(
+        order.product,
+        order.quantity,
+        order.id,
+      );
+      await this.rmqService.sendShippingValidationMessage(outboxMessage);
+    } catch {
+      console.debug(
+        `The order has already been deleted when trying to compensate inventory reserve step`,
+      );
+    }
   }
 
   async handleShippingValidationResponse(mes: MessageResponse) {
-    const orderRepo = this.dataSource.getRepository(Order);
-    const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
-    const outboxMessage = new OrdersOutboxMessage(
-      order.product,
-      order.quantity,
-      order.id,
-    );
-    if (!mes.successful) {
-      console.debug(`Could not validate shipping!`);
-      await this.rmqService.sendCompensateInventoryReserveMessage(
-        outboxMessage,
+    try {
+      const orderRepo = this.dataSource.getRepository(Order);
+      const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
+      const outboxMessage = new OrdersOutboxMessage(
+        order.product,
+        order.quantity,
+        order.id,
       );
-      await orderRepo.delete({ id: mes.orderId });
-      return;
+      if (!mes.successful) {
+        console.debug(`Could not validate shipping!`);
+        await this.rmqService.sendCompensateInventoryReserveMessage(
+          outboxMessage,
+        );
+        await orderRepo.delete({ id: mes.orderId });
+        return;
+      }
+      await this.rmqService.sendInventoryRemoveMessage(outboxMessage);
+    } catch {
+      console.debug(
+        `Order has already been deleted when trying to compensate for shipping validation error`,
+      );
     }
-    await this.rmqService.sendInventoryRemoveMessage(outboxMessage);
   }
 
   async handleInventoryRemoveResponse(mes: MessageResponse) {
-    const orderRepo = this.dataSource.getRepository(Order);
-    const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
-    const outboxMessage = new OrdersOutboxMessage(
-      order.product,
-      order.quantity,
-      order.id,
-    );
-    if (!mes.successful) {
-      console.debug(`Could not delete inventory!`);
-      await this.rmqService.sendCompensateInventoryReserveMessage(
-        outboxMessage,
+    try {
+      const orderRepo = this.dataSource.getRepository(Order);
+      const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
+      const outboxMessage = new OrdersOutboxMessage(
+        order.product,
+        order.quantity,
+        order.id,
       );
-      await orderRepo.delete({ id: mes.orderId });
+      if (!mes.successful) {
+        console.debug(`Could not delete inventory!`);
+        await this.rmqService.sendCompensateInventoryReserveMessage(
+          outboxMessage,
+        );
+        await orderRepo.delete({ id: mes.orderId });
+      }
+      order.status = STATUS.CONFIRMED;
+      await orderRepo.save(order);
+    } catch {
+      console.debug(
+        `Order has already been deleted when trying to compensate for order remove`,
+      );
     }
-    order.status = STATUS.CONFIRMED;
-    await orderRepo.save(order);
   }
 }
