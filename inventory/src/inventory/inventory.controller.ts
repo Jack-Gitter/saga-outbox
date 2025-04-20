@@ -9,6 +9,7 @@ export class InventoryController {
     private inventoryService: InventoryService,
   ) {}
   async onApplicationBootstrap() {
+    await this.inventoryService.pollOutbox();
     await this.rmqService.registerInventoryReserveMessageHandler(
       this.inventoryService.handleInventoryReserveMessage.bind(
         this.inventoryService,
