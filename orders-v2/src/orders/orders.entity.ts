@@ -24,4 +24,12 @@ export class Order {
     default: STATUS.PENDING,
   })
   status: STATUS;
+
+  toJSONMessage() {
+    return {
+      orderId: this.id,
+      product: this.product,
+      quantity: this.quantity,
+    };
+  }
 }

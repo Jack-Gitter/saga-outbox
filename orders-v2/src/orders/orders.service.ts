@@ -48,10 +48,13 @@ export class OrdersService {
   }
 
   async handleInventoryReserveResponse(mes: MessageResponse) {
+    const orderRepo = this.dataSource.getRepository(Order);
     if (!mes.successful) {
       console.debug(`Could not reserve inventory`);
-      const orderRepo = this.dataSource.getRepository(Order);
       await orderRepo.delete({ id: mes.orderId });
     }
+
+    const order = await orderRepo.findOneBy({ id: mes.orderId });
+    this.rmqService.sendShippingValidationMessage();
   }
 }
