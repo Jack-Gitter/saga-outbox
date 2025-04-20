@@ -15,5 +15,10 @@ export class InventoryController {
         this.inventoryService,
       ),
     );
+    await this.rmqService.registerInventoryRemoveMessageHandler(
+      this.inventoryService.handleInventoryRemoveMessage.bind(
+        this.inventoryService,
+      ),
+    );
   }
 }
