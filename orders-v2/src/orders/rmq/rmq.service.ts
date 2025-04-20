@@ -19,14 +19,17 @@ export class RMQService {
   async registerInventoryReserveMessageResponseHandler(
     fun: (messageResponse: MessageResponse) => unknown,
   ) {
-    this.channel.consume(INVENTORY_RESERVE_RESPONSE, async (mes: Message) => {
-      const contents = JSON.parse(mes.content.toString());
-      const messageResponse: MessageResponse = {
-        successful: contents.successful,
-        orderId: contents.orderId,
-      };
-      await fun(messageResponse);
-    });
+    await this.channel.consume(
+      INVENTORY_RESERVE_RESPONSE,
+      async (mes: Message) => {
+        const contents = JSON.parse(mes.content.toString());
+        const messageResponse: MessageResponse = {
+          successful: contents.successful,
+          orderId: contents.orderId,
+        };
+        await fun(messageResponse);
+      },
+    );
   }
 
   async sendShippingValidationMessage(mes: OrdersOutboxMessage) {
