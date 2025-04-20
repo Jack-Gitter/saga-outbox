@@ -4,11 +4,12 @@ import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
 import { RMQService } from './rmq/rmq.service';
 import { MessageResponse } from './orders.types';
-import { INVENTORY_RESERVE } from './orders.symbols';
 import {
+  INVENTORY_REMOVE_RESPONSE,
   INVENTORY_RESERVE_RESPONSE,
   SHIPPING_VALIDATION_RESPONSE,
 } from './rmq/rmq.types';
+import { STATUS } from './orders.enums';
 
 @Injectable()
 export class OrdersService {
@@ -25,7 +26,11 @@ export class OrdersService {
     );
     await this.rmqService.registerQueueResponseHandler(
       SHIPPING_VALIDATION_RESPONSE,
-      this.handleInventoryReserveResponse.bind(this),
+      this.handleShippingValidationResponse.bind(this),
+    );
+    await this.rmqService.registerQueueResponseHandler(
+      INVENTORY_REMOVE_RESPONSE,
+      this.handleInventoryRemoveResponse.bind(this),
     );
   }
   async createPendingOrder(product: number, quantity: number) {
@@ -95,5 +100,24 @@ export class OrdersService {
       return;
     }
     await this.rmqService.sendInventoryRemoveMessage(outboxMessage);
+  }
+
+  async handleInventoryRemoveResponse(mes: MessageResponse) {
+    const orderRepo = this.dataSource.getRepository(Order);
+    const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
+    const outboxMessage = new OrdersOutboxMessage(
+      order.product,
+      order.quantity,
+      order.id,
+    );
+    if (!mes.successful) {
+      console.debug(`Could not delete inventory!`);
+      await this.rmqService.sendCompensateInventoryReserveMessage(
+        outboxMessage,
+      );
+      await orderRepo.delete({ id: mes.orderId });
+    }
+    order.status = STATUS.CONFIRMED;
+    await orderRepo.save(order);
   }
 }
