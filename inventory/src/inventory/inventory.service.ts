@@ -56,11 +56,19 @@ export class InventoryService {
 
   async handleInventoryRemoveMessage(message: InventoryRemoveInboxMessage) {
     await this.dataSource.transaction(async (entityManager) => {
-      const inboxMessage = new InventoryRemoveInboxMessageEntity(
-        message.orderId,
-      );
       const inventoryRemoveInboxRepo = entityManager.getRepository(
         InventoryRemoveInboxMessageEntity,
+      );
+      const existingMessage = await inventoryReservationRepo.findOneBy({
+        id: message.orderId,
+      });
+
+      if (existingMessage) {
+        console.debug(`Already processed this message!`);
+        return;
+      }
+      const inboxMessage = new InventoryRemoveInboxMessageEntity(
+        message.orderId,
       );
       await inventoryRemoveInboxRepo.save(inboxMessage);
       const inventoryReservationRepo =
