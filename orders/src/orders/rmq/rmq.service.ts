@@ -46,7 +46,7 @@ export class RMQService {
   }
   async registerQueueResponseHandler(
     queue: string,
-    fun: (messageResponse: MessageResponse) => unknown,
+    fun: (messageResponse: MessageResponse) => Promise<void>,
   ) {
     await this.channel.consume(
       queue,

@@ -7,7 +7,7 @@ export class RMQService {
   constructor(private channel: Channel) {}
 
   async registerInventoryReserveMessageHandler(
-    fun: (id: number, product: number, quantity: number) => void,
+    fun: (id: number, product: number, quantity: number) => Promise<void>,
   ) {
     this.channel.consume(INVENTORY_RESERVE, async (mes: Message) => {
       const content = JSON.parse(mes.content.toString());
