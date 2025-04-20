@@ -78,10 +78,12 @@ export class InventoryService {
       const reservation = await inventoryReservationRepo.findOneBy({
         id: message.orderId,
       });
-      const res = await inventoryReservationRepo.remove(reservation);
       let successful = true;
-      if (!res) {
-        successful = false;
+      if (reservation) {
+        const res = await inventoryReservationRepo.remove(reservation);
+        if (!res) {
+          successful = false;
+        }
       }
       const outboxRepo = entityManager.getRepository(
         InventoryReserveOutboxMessageEntity,
