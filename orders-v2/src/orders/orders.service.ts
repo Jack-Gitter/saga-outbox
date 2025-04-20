@@ -7,10 +7,7 @@ import { INVENTORY_RESERVE, ORDERS_RMQ_CLIENT } from './orders.symbols';
 
 @Injectable()
 export class OrdersService {
-  constructor(
-    private dataSource: DataSource,
-    @Inject(ORDERS_RMQ_CLIENT) private rmqClient: ClientProxy,
-  ) {}
+  constructor(private dataSource: DataSource) {}
 
   onModuleInit() {
     this.pollOrderOutbox();
@@ -43,7 +40,6 @@ export class OrdersService {
         this.rmqClient.emit(INVENTORY_RESERVE, message.toJSON());
       });
 
-      console.log('here!');
       await orderOutboxRepo.remove(outboxMessages);
     }, 5000);
   }
