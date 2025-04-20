@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { InventoryReserveInboxMessage } from './rmq/rmq.types';
+import {
+  InventoryRemoveInboxMessage,
+  InventoryReserveInboxMessage,
+} from './rmq/rmq.types';
 import { InventoryReserveInboxMessageEntity } from './inventory.reserve.inbox.message.entity';
 import { InventoryReservation } from './inventory.entity';
 import { InventoryReserveOutboxMessageEntity } from './inventory.reserve.outbox.message.entity';
 import { RMQService } from './rmq/rmq.service';
+import { InventoryRemoveInboxMessageEntity } from './inventory.remove.inbox.message.entity';
 
 @Injectable()
 export class InventoryService {
@@ -49,8 +53,22 @@ export class InventoryService {
     });
   }
 
-  handleInventoryRemoveMessage(message: InventoryRemoveMessage) {
-    await this.dataSource.transaction((entityManager) => {});
+  async handleInventoryRemoveMessage(message: InventoryRemoveInboxMessage) {
+    await this.dataSource.transaction(async (entityManager) => {
+      const inboxMessage = new InventoryRemoveInboxMessageEntity(
+        message.orderId,
+      );
+      const inventoryRemoveInboxRepo = entityManager.getRepository(
+        InventoryRemoveInboxMessageEntity,
+      );
+      await inventoryRemoveInboxRepo.save(inboxMessage);
+      const inventoryReservationRepo =
+        entityManager.getRepository(InventoryReservation);
+      const reservation = await inventoryReservationRepo.findOneBy({
+        id: message.orderId,
+      });
+      await inventoryReservationRepo.remove(reservation);
+    });
   }
 
   async pollOutbox() {

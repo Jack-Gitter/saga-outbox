@@ -15,3 +15,4 @@
     * need to have one message handler in this case, and dispatch the corresponding events to the event handler for the message
 * need to know what to send in the next step -- if we're not storing the saga and its "steps" in memory, how?
     * need to either use the pending order, the message response, or something else to figure out what to send to the next service
+* different inboxes for different messages, can have conflicting ids!
