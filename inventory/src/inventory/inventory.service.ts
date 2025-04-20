@@ -30,7 +30,6 @@ export class InventoryService {
       const res = await reservationRepo.insert(inventoryReservation);
       const successful = res.identifiers.length > 0;
 
-      // TODO
       const outboxRepo = entityManager.getRepository(InventoryOutboxMessage);
       const outboxMessage = new InventoryOutboxMessage(
         message.orderId,
