@@ -23,7 +23,10 @@ export class InventoryService {
       const inboxRepo = entityManager.getRepository(
         InventoryReserveInboxMessageEntity,
       );
-      const existingMessage = inboxRepo.findOneBy({ id: message.orderId });
+      const existingMessage = await inboxRepo.findOneBy({
+        id: message.orderId,
+      });
+      console.log(existingMessage);
       if (existingMessage) {
         console.debug(`already handled this message!`);
         return;
@@ -98,6 +101,11 @@ export class InventoryService {
     );
     const reserveMessages = await reserveOutboxRepo.find();
     const removeMessages = await removeOutboxRepo.find();
+
+    console.debug(`Found reserve messages!`);
+    console.debug(reserveMessages);
+    console.debug(`Found remove message`);
+    console.debug(removeMessages);
 
     await Promise.all(
       reserveMessages.map(async (message) => {
