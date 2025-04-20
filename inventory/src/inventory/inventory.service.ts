@@ -49,6 +49,10 @@ export class InventoryService {
     });
   }
 
+  handleInventoryRemoveMessage(message: InventoryRemoveMessage) {
+    await this.dataSource.transaction((entityManager) => {});
+  }
+
   async pollOutbox() {
     const reserveOutboxRepo = this.dataSource.getRepository(
       InventoryReserveOutboxMessageEntity,
