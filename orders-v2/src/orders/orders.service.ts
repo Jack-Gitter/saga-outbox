@@ -39,9 +39,11 @@ export class OrdersService {
       console.debug('found messages!');
       console.debug(outboxMessages);
 
-      outboxMessages.forEach(async (message) => {
-        await this.rmqService.sendInventoryReserveMessage(message);
-      });
+      await Promise.all(
+        outboxMessages.map((mes) => {
+          await this.rmqService.sendInventoryReserveMessage(mes);
+        }),
+      );
 
       await orderOutboxRepo.remove(outboxMessages);
     }, 5000);
