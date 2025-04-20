@@ -4,11 +4,7 @@ import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
 import { RMQService } from './rmq/rmq.service';
 import { MessageResponse } from './orders.types';
-import {
-  INVENTORY_REMOVE_RESPONSE,
-  INVENTORY_RESERVE_RESPONSE,
-  SHIPPING_VALIDATION_RESPONSE,
-} from './rmq/rmq.types';
+import {} from './rmq/rmq.types';
 import { STATUS } from './orders.enums';
 
 @Injectable()
@@ -18,21 +14,6 @@ export class OrdersService {
     private rmqService: RMQService,
   ) {}
 
-  async onApplicationBootstrap() {
-    await this.pollOrderOutbox();
-    await this.rmqService.registerQueueResponseHandler(
-      INVENTORY_RESERVE_RESPONSE,
-      this.handleInventoryReserveResponse.bind(this),
-    );
-    await this.rmqService.registerQueueResponseHandler(
-      SHIPPING_VALIDATION_RESPONSE,
-      this.handleShippingValidationResponse.bind(this),
-    );
-    await this.rmqService.registerQueueResponseHandler(
-      INVENTORY_REMOVE_RESPONSE,
-      this.handleInventoryRemoveResponse.bind(this),
-    );
-  }
   async createPendingOrder(product: number, quantity: number) {
     await this.dataSource.transaction(async (entityManager) => {
       const orderRepo = entityManager.getRepository(Order);
