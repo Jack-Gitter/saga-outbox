@@ -4,6 +4,11 @@ import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
 import { RMQService } from './rmq/rmq.service';
 import { MessageResponse } from './orders.types';
+import { INVENTORY_RESERVE } from './orders.symbols';
+import {
+  INVENTORY_RESERVE_RESPONSE,
+  SHIPPING_VALIDATION_RESPONSE,
+} from './rmq/rmq.types';
 
 @Injectable()
 export class OrdersService {
@@ -14,7 +19,12 @@ export class OrdersService {
 
   async onApplicationBootstrap() {
     await this.pollOrderOutbox();
-    await this.rmqService.registerInventoryReserveMessageResponseHandler(
+    await this.rmqService.registerQueueResponseHandler(
+      INVENTORY_RESERVE_RESPONSE,
+      this.handleInventoryReserveResponse.bind(this),
+    );
+    await this.rmqService.registerQueueResponseHandler(
+      SHIPPING_VALIDATION_RESPONSE,
       this.handleInventoryReserveResponse.bind(this),
     );
   }
@@ -57,13 +67,33 @@ export class OrdersService {
     if (!mes.successful) {
       console.debug(`Could not reserve inventory`);
       await orderRepo.delete({ id: mes.orderId });
+      return;
     }
-    const order = await orderRepo.findOneBy({ id: mes.orderId });
+    const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
     const outboxMessage = new OrdersOutboxMessage(
       order.product,
       order.quantity,
       order.id,
     );
     await this.rmqService.sendShippingValidationMessage(outboxMessage);
+  }
+
+  async handleShippingValidationResponse(mes: MessageResponse) {
+    const orderRepo = this.dataSource.getRepository(Order);
+    const order = await orderRepo.findOneByOrFail({ id: mes.orderId });
+    const outboxMessage = new OrdersOutboxMessage(
+      order.product,
+      order.quantity,
+      order.id,
+    );
+    if (!mes.successful) {
+      console.debug(`Could not validate shipping!`);
+      await this.rmqService.sendCompensateInventoryReserveMessage(
+        outboxMessage,
+      );
+      await orderRepo.delete({ id: mes.orderId });
+      return;
+    }
+    await this.rmqService.sendInventoryRemoveMessage(outboxMessage);
   }
 }

@@ -3,9 +3,9 @@ import { Channel, Message } from 'amqplib-as-promised/lib';
 import { OrdersOutboxMessage } from '../orders.outbox.entity';
 import { INVENTORY_RESERVE } from '../orders.symbols';
 import {
-  INVENTORY_RESERVE_RESPONSE,
+  INVENTORY_REMOVE,
+  INVENTORY_RESERVE_COMPENSATE,
   SHIPPING_VALIDATION,
-  SHIPPING_VALIDATION_RESPONSE,
 } from './rmq.types';
 import { MessageResponse } from '../orders.types';
 
@@ -21,20 +21,26 @@ export class RMQService {
     );
   }
 
-  async registerInventoryReserveMessageResponseHandler(
+  async sendCompensateInventoryReserveMessage(mes: OrdersOutboxMessage) {
+    console.debug(`Sending inventory reserve compensation`);
+    await this.channel.sendToQueue(
+      INVENTORY_RESERVE_COMPENSATE,
+      Buffer.from(JSON.stringify(mes.toJSON())),
+    );
+  }
+
+  async registerQueueResponseHandler(
+    queue: string,
     fun: (messageResponse: MessageResponse) => unknown,
   ) {
-    await this.channel.consume(
-      INVENTORY_RESERVE_RESPONSE,
-      async (mes: Message) => {
-        const contents = JSON.parse(mes.content.toString());
-        const messageResponse: MessageResponse = {
-          successful: contents.successful,
-          orderId: contents.orderId,
-        };
-        await fun(messageResponse);
-      },
-    );
+    await this.channel.consume(queue, async (mes: Message) => {
+      const contents = JSON.parse(mes.content.toString());
+      const messageResponse: MessageResponse = {
+        successful: contents.successful,
+        orderId: contents.orderId,
+      };
+      await fun(messageResponse);
+    });
   }
 
   async sendShippingValidationMessage(mes: OrdersOutboxMessage) {
@@ -45,19 +51,11 @@ export class RMQService {
     );
   }
 
-  async registerShippingValidationMessageResponseHandler(
-    fun: (messageResponse: MessageResponse) => unknown,
-  ) {
-    await this.channel.consume(
-      SHIPPING_VALIDATION_RESPONSE,
-      async (mes: Message) => {
-        const contents = JSON.parse(mes.content.toString());
-        const messageResponse: MessageResponse = {
-          successful: contents.successful,
-          orderId: contents.orderId,
-        };
-        await fun(messageResponse);
-      },
+  async sendInventoryRemoveMessage(mes: OrdersOutboxMessage) {
+    console.debug(`Sending shipping validation message!`);
+    await this.channel.sendToQueue(
+      INVENTORY_REMOVE,
+      Buffer.from(JSON.stringify(mes.toJSON())),
     );
   }
 }
