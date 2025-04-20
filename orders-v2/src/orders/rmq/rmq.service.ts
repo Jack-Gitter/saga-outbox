@@ -33,14 +33,19 @@ export class RMQService {
     queue: string,
     fun: (messageResponse: MessageResponse) => unknown,
   ) {
-    await this.channel.consume(queue, async (mes: Message) => {
-      const contents = JSON.parse(mes.content.toString());
-      const messageResponse: MessageResponse = {
-        successful: contents.successful,
-        orderId: contents.orderId,
-      };
-      await fun(messageResponse);
-    });
+    await this.channel.consume(
+      queue,
+      async (mes: Message) => {
+        const contents = JSON.parse(mes.content.toString());
+        const messageResponse: MessageResponse = {
+          successful: contents.successful,
+          orderId: contents.orderId,
+        };
+        await fun(messageResponse);
+        this.channel.ack(mes);
+      },
+      { noAck: false },
+    );
   }
 
   async sendShippingValidationMessage(mes: OrdersOutboxMessage) {
