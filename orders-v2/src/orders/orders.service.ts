@@ -14,7 +14,7 @@ export class OrdersService {
 
   async onModuleInit() {
     await this.pollOrderOutbox();
-    this.rmqService.registerInventoryReserveMessageResponseHandler(
+    await this.rmqService.registerInventoryReserveMessageResponseHandler(
       this.handleInventoryReserveResponse,
     );
   }
