@@ -85,14 +85,25 @@ export class InventoryService {
     const reserveOutboxRepo = this.dataSource.getRepository(
       InventoryReserveOutboxMessageEntity,
     );
-    const messages = await reserveOutboxRepo.find();
+    const removeOutboxRepo = this.dataSource.getRepository(
+      InventoryRemoveOutboxMessageEntity,
+    );
+    const reserveMessages = await reserveOutboxRepo.find();
+    const removeMessages = await removeOutboxRepo.find();
 
     await Promise.all(
-      messages.map(async (message) => {
+      reserveMessages.map(async (message) => {
         return await this.rmqService.sendInventoryReserveResponse(message);
       }),
     );
 
-    await reserveOutboxRepo.remove(messages);
+    await Promise.all(
+      removeMessages.map(async (message) => {
+        return await this.rmqService.sendInventoryReserveResponse(message);
+      }),
+    );
+
+    await reserveOutboxRepo.remove(reserveMessages);
+    await removeOutboxRepo.remove(removeMessages);
   }
 }

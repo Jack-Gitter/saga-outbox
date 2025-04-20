@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Channel, Message } from 'amqplib-as-promised/lib';
 import {
   INVENTORY_REMOVE,
+  INVENTORY_REMOVE_RESP,
   INVENTORY_RESERVE,
   INVENTORY_RESERVE_RESP,
   InventoryRemoveInboxMessage,
   InventoryReserveInboxMessage,
 } from './rmq.types';
 import { InventoryReserveOutboxMessageEntity } from '../inventory.reserve.outbox.message.entity';
+import { InventoryRemoveOutboxMessageEntity } from '../inventory.remove.outbox.message.entity';
 
 @Injectable()
 export class RMQService {
@@ -54,6 +56,15 @@ export class RMQService {
   ) {
     await this.channel.sendToQueue(
       INVENTORY_RESERVE_RESP,
+      Buffer.from(JSON.stringify(message.toJSON())),
+    );
+  }
+
+  async sendInventoryRemoveResponse(
+    message: InventoryRemoveOutboxMessageEntity,
+  ) {
+    await this.channel.sendToQueue(
+      INVENTORY_REMOVE_RESP,
       Buffer.from(JSON.stringify(message.toJSON())),
     );
   }
