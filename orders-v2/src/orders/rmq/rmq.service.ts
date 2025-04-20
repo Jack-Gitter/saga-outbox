@@ -10,6 +10,7 @@ export class RMQService {
   constructor(private channel: Channel) {}
 
   async sendInventoryReserveMessage(mes: OrdersOutboxMessage) {
+    console.debug(`Sending inventory reserve message!`);
     await this.channel.sendToQueue(
       INVENTORY_RESERVE,
       Buffer.from(JSON.stringify(mes.toJSON())),
@@ -33,6 +34,7 @@ export class RMQService {
   }
 
   async sendShippingValidationMessage(mes: OrdersOutboxMessage) {
+    console.debug(`Sending shipping validation message!`);
     await this.channel.sendToQueue(
       SHIPPING_VALIDATION,
       Buffer.from(JSON.stringify(mes.toJSON())),
