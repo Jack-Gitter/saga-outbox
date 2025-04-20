@@ -93,33 +93,35 @@ export class InventoryService {
   }
 
   async pollOutbox() {
-    const reserveOutboxRepo = this.dataSource.getRepository(
-      InventoryReserveOutboxMessageEntity,
-    );
-    const removeOutboxRepo = this.dataSource.getRepository(
-      InventoryRemoveOutboxMessageEntity,
-    );
-    const reserveMessages = await reserveOutboxRepo.find();
-    const removeMessages = await removeOutboxRepo.find();
+    await setInterval(async () => {
+      const reserveOutboxRepo = this.dataSource.getRepository(
+        InventoryReserveOutboxMessageEntity,
+      );
+      const removeOutboxRepo = this.dataSource.getRepository(
+        InventoryRemoveOutboxMessageEntity,
+      );
+      const reserveMessages = await reserveOutboxRepo.find();
+      const removeMessages = await removeOutboxRepo.find();
 
-    console.debug(`Found reserve messages!`);
-    console.debug(reserveMessages);
-    console.debug(`Found remove message`);
-    console.debug(removeMessages);
+      console.debug(`Found reserve messages!`);
+      console.debug(reserveMessages);
+      console.debug(`Found remove message`);
+      console.debug(removeMessages);
 
-    await Promise.all(
-      reserveMessages.map(async (message) => {
-        return await this.rmqService.sendInventoryReserveResponse(message);
-      }),
-    );
+      await Promise.all(
+        reserveMessages.map(async (message) => {
+          return await this.rmqService.sendInventoryReserveResponse(message);
+        }),
+      );
 
-    await Promise.all(
-      removeMessages.map(async (message) => {
-        return await this.rmqService.sendInventoryReserveResponse(message);
-      }),
-    );
+      await Promise.all(
+        removeMessages.map(async (message) => {
+          return await this.rmqService.sendInventoryReserveResponse(message);
+        }),
+      );
 
-    await reserveOutboxRepo.remove(reserveMessages);
-    await removeOutboxRepo.remove(removeMessages);
+      await reserveOutboxRepo.remove(reserveMessages);
+      await removeOutboxRepo.remove(removeMessages);
+    }, 5000);
   }
 }
