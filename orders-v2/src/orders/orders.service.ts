@@ -51,7 +51,7 @@ export class OrdersService {
     if (!mes.successful) {
       console.debug(`Could not reserve inventory`);
       const orderRepo = this.dataSource.getRepository(Order);
-      orderRepo.delete({ id: mes.orderId });
+      await orderRepo.delete({ id: mes.orderId });
     }
   }
 }
