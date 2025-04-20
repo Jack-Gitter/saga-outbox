@@ -38,7 +38,7 @@ export class RMQService {
   }
 
   async sendInventoryRemoveMessage(mes: OrdersOutboxMessage) {
-    console.debug(`Sending shipping validation message!`);
+    console.debug(`Sending inventory remove message!`);
     await this.channel.sendToQueue(
       INVENTORY_REMOVE,
       Buffer.from(JSON.stringify(mes.toJSON())),
