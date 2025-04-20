@@ -22,7 +22,7 @@ export class RMQService {
   ) {
     await this.channel.consume(
       SHIPPING_VALIDATION,
-      (mes: Message) => {
+      async (mes: Message) => {
         const content = JSON.parse(mes.content.toString());
         await fun(content);
         this.channel.ack(mes);
