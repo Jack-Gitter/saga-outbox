@@ -61,6 +61,6 @@ export class InventoryService {
       }),
     );
 
-    // create messages and send them
+    await reserveOutboxRepo.remove(messages);
   }
 }
