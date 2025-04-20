@@ -6,6 +6,6 @@ export class InventoryReserveInboxMessageEntity {
     this.id = id;
   }
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ primary: true, type: 'int', nullable: false })
   id: number;
 }

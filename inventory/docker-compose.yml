@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:latest
-    container_name: my-postgres-db
+    container_name: inventory_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

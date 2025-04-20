@@ -1,8 +1,8 @@
-import { InventoryReservation } from 'src/inventory/inventory.entity';
-import { InventoryRemoveInboxMessageEntity } from 'src/inventory/inventory.remove.inbox.message.entity';
-import { InventoryRemoveOutboxMessageEntity } from 'src/inventory/inventory.remove.outbox.message.entity';
-import { InventoryReserveInboxMessageEntity } from 'src/inventory/inventory.reserve.inbox.message.entity';
-import { InventoryReserveOutboxMessageEntity } from 'src/inventory/inventory.reserve.outbox.message.entity';
+import { InventoryReservation } from '../../inventory/inventory.entity';
+import { InventoryRemoveInboxMessageEntity } from '../../inventory/inventory.remove.inbox.message.entity';
+import { InventoryRemoveOutboxMessageEntity } from '../../inventory/inventory.remove.outbox.message.entity';
+import { InventoryReserveInboxMessageEntity } from '../../inventory/inventory.reserve.inbox.message.entity';
+import { InventoryReserveOutboxMessageEntity } from '../../inventory/inventory.reserve.outbox.message.entity';
 import { DataSource } from 'typeorm';
 
 export const dataSource: DataSource = new DataSource({
