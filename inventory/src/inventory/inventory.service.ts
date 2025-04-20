@@ -27,11 +27,15 @@ export class InventoryService {
       );
 
       const reservationRepo = entityManager.getRepository(InventoryReservation);
-      await reservationRepo.save(inventoryReservation);
+      const res = await reservationRepo.insert(inventoryReservation);
+      const successful = res.identifiers.length > 0;
 
       // TODO
       const outboxRepo = entityManager.getRepository(InventoryOutboxMessage);
-      const outboxMessage = new InventoryOutboxMessage();
+      const outboxMessage = new InventoryOutboxMessage(
+        message.orderId,
+        successful,
+      );
       await outboxRepo.save(outboxMessage);
     });
   }
