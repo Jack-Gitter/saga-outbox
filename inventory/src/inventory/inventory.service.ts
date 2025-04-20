@@ -79,7 +79,10 @@ export class InventoryService {
         id: message.orderId,
       });
       const res = await inventoryReservationRepo.remove(reservation);
-      const successful = res.affected > 0;
+      let successful = true;
+      if (!res) {
+        successful = false;
+      }
       const outboxRepo = entityManager.getRepository(
         InventoryReserveOutboxMessageEntity,
       );
