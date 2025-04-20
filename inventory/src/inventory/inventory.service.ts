@@ -93,7 +93,7 @@ export class InventoryService {
   }
 
   async pollOutbox() {
-    await setInterval(async () => {
+    setInterval(async () => {
       const reserveOutboxRepo = this.dataSource.getRepository(
         InventoryReserveOutboxMessageEntity,
       );
