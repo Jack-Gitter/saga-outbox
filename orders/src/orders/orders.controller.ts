@@ -15,7 +15,7 @@ export class OrdersController {
     private rmqService: RMQService,
   ) {}
 
-  async OnApplicationBootstrap() {
+  async onApplicationBootstrap() {
     await this.ordersService.pollOrderOutbox();
     await this.rmqService.registerQueueResponseHandler(
       INVENTORY_RESERVE_RESPONSE,
