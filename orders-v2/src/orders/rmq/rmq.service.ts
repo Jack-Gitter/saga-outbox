@@ -16,16 +16,16 @@ export class RMQService {
     );
   }
 
-  registerInventoryReserveMessageResponseHandler(
+  async registerInventoryReserveMessageResponseHandler(
     fun: (messageResponse: MessageResponse) => unknown,
   ) {
-    this.channel.consume(INVENTORY_RESERVE_RESPONSE, (mes: Message) => {
+    this.channel.consume(INVENTORY_RESERVE_RESPONSE, async (mes: Message) => {
       const contents = JSON.parse(mes.content.toString());
       const messageResponse: MessageResponse = {
         successful: contents.successful,
         orderId: contents.orderId,
       };
-      fun(messageResponse);
+      await fun(messageResponse);
     });
   }
 }
