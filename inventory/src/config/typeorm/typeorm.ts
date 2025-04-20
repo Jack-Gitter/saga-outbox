@@ -4,6 +4,7 @@ import { InventoryRemoveOutboxMessageEntity } from '../../inventory/inventory.re
 import { InventoryReserveInboxMessageEntity } from '../../inventory/inventory.reserve.inbox.message.entity';
 import { InventoryReserveOutboxMessageEntity } from '../../inventory/inventory.reserve.outbox.message.entity';
 import { DataSource } from 'typeorm';
+import { Init1745172413738 } from './migrations/1745172413738-Init';
 
 export const dataSource: DataSource = new DataSource({
   type: 'postgres',
@@ -19,5 +20,5 @@ export const dataSource: DataSource = new DataSource({
     InventoryRemoveOutboxMessageEntity,
     InventoryReserveOutboxMessageEntity,
   ],
-  migrations: [],
+  migrations: [Init1745172413738],
 });
