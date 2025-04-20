@@ -2,9 +2,8 @@ import { Controller } from '@nestjs/common';
 
 @Controller()
 export class InventoryController {
-  // here, we want to use RMQService in onApplicationBoostrap to set up message handlers for incomming messages
-  // all the real work is done by the inventory service
-  //
-
-  onApplicationBoostrap() {}
+  onApplicationBoostrap() {
+    // register handlers for incomming inventory reservation and deletion
+    // register the poller to poll outbox messages
+  }
 }

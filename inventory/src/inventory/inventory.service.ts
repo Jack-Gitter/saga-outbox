@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { InventoryReserveMessage } from './rmq/rmq.types';
 import { InventoryInboxMessage } from './inventory.inbox.message.entity';
 import { InventoryReservation } from './inventory.entity';
+import { InventoryOutboxMessage } from './inventory.outbox.message.entity';
 
 @Injectable()
 export class InventoryService {
@@ -27,6 +28,11 @@ export class InventoryService {
 
       const reservationRepo = entityManager.getRepository(InventoryReservation);
       await reservationRepo.save(inventoryReservation);
+
+      // TODO
+      const outboxRepo = entityManager.getRepository(InventoryOutboxMessage);
+      const outboxMessage = new InventoryOutboxMessage();
+      await outboxRepo.save(outboxMessage);
     });
   }
 }
