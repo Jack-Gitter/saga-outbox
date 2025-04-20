@@ -9,6 +9,7 @@ import { InventoryReservation } from './inventory.entity';
 import { InventoryReserveOutboxMessageEntity } from './inventory.reserve.outbox.message.entity';
 import { RMQService } from './rmq/rmq.service';
 import { InventoryRemoveInboxMessageEntity } from './inventory.remove.inbox.message.entity';
+import { InventoryRemoveOutboxMessageEntity } from './inventory.remove.outbox.message.entity';
 
 @Injectable()
 export class InventoryService {
@@ -67,7 +68,16 @@ export class InventoryService {
       const reservation = await inventoryReservationRepo.findOneBy({
         id: message.orderId,
       });
-      await inventoryReservationRepo.remove(reservation);
+      const res = await inventoryReservationRepo.delete(reservation);
+      const successful = res.affected > 0;
+      const outboxRepo = entityManager.getRepository(
+        InventoryReserveOutboxMessageEntity,
+      );
+      const outboxMessage = new InventoryRemoveOutboxMessageEntity(
+        message.orderId,
+        successful,
+      );
+      await outboxRepo.save(outboxMessage);
     });
   }
 
