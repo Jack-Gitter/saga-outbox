@@ -39,8 +39,8 @@ export class OrdersService {
       console.debug('found messages!');
       console.debug(outboxMessages);
 
-      outboxMessages.forEach((message) => {
-        this.rmqService.sendInventoryReserveMessage(message);
+      outboxMessages.forEach(async (message) => {
+        await this.rmqService.sendInventoryReserveMessage(message);
       });
 
       await orderOutboxRepo.remove(outboxMessages);
@@ -60,6 +60,6 @@ export class OrdersService {
       order.quantity,
       order.id,
     );
-    this.rmqService.sendShippingValidationMessage(outboxMessage);
+    await this.rmqService.sendShippingValidationMessage(outboxMessage);
   }
 }

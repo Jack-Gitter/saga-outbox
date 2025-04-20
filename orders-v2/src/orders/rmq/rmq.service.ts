@@ -9,8 +9,8 @@ import { MessageResponse } from '../orders.types';
 export class RMQService {
   constructor(private channel: Channel) {}
 
-  sendInventoryReserveMessage(mes: OrdersOutboxMessage) {
-    this.channel.sendToQueue(
+  async sendInventoryReserveMessage(mes: OrdersOutboxMessage) {
+    await this.channel.sendToQueue(
       INVENTORY_RESERVE,
       Buffer.from(JSON.stringify(mes.toJSON())),
     );
@@ -29,8 +29,8 @@ export class RMQService {
     });
   }
 
-  sendShippingValidationMessage(mes: OrdersOutboxMessage) {
-    this.channel.sendToQueue(
+  async sendShippingValidationMessage(mes: OrdersOutboxMessage) {
+    await this.channel.sendToQueue(
       SHIPPING_VALIDATION,
       Buffer.from(JSON.stringify(mes.toJSON())),
     );
