@@ -5,6 +5,8 @@ import { INVENTORY_RESERVE } from '../orders.symbols';
 import {
   INVENTORY_REMOVE,
   INVENTORY_REMOVE_RESPONSE,
+  INVENTORY_RESERVE_COMPENSATE,
+  INVENTORY_RESERVE_COMPENSATE_RESP,
   INVENTORY_RESERVE_RESPONSE,
   SHIPPING_VALIDATION,
   SHIPPING_VALIDATION_RESPONSE,
@@ -19,6 +21,8 @@ const providers: Provider[] = [
       const channel = await connection.createChannel();
       await channel.assertQueue(INVENTORY_RESERVE);
       await channel.assertQueue(INVENTORY_RESERVE_RESPONSE);
+      await channel.assertQueue(INVENTORY_RESERVE_COMPENSATE);
+      await channel.assertQueue(INVENTORY_RESERVE_COMPENSATE_RESP);
       await channel.assertQueue(SHIPPING_VALIDATION);
       await channel.assertQueue(SHIPPING_VALIDATION_RESPONSE);
       await channel.assertQueue(INVENTORY_REMOVE);
