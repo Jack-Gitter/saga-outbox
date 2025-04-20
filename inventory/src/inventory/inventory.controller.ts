@@ -14,7 +14,5 @@ export class InventoryController {
         this.inventoryService,
       ),
     );
-    // register handlers for incomming inventory reservation and deletion
-    // register the poller to poll outbox messages
   }
 }

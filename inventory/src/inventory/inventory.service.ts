@@ -38,4 +38,11 @@ export class InventoryService {
       await outboxRepo.save(outboxMessage);
     });
   }
+
+  async pollOutbox() {
+    const outboxRepo = this.dataSource.getRepository(InventoryOutboxMessage);
+    const messages = outboxRepo.find();
+
+    // create messages and send them
+  }
 }

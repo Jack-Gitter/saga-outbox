@@ -11,4 +11,11 @@ export class InventoryOutboxMessage {
 
   @Column({ type: 'boolean', nullable: false })
   successful: boolean;
+
+  toJSON() {
+    return {
+      orderId: this.orderId,
+      successful: this.successful,
+    };
+  }
 }
