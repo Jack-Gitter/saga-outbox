@@ -4,6 +4,7 @@ import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
 import { ClientProxy } from '@nestjs/microservices';
 import { ORDERS_RMQ_CLIENT } from './orders.symbols';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class OrdersService {
@@ -43,6 +44,7 @@ export class OrdersService {
         this.rmqClient.emit('INVENTORY_RESERVE', message.toJSON());
       });
 
+      console.log('here!');
       await orderOutboxRepo.remove(outboxMessages);
     }, 5000);
   }
