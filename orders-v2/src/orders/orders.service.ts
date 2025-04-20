@@ -12,8 +12,11 @@ export class OrdersService {
     private rmqService: RMQService,
   ) {}
 
-  onModuleInit() {
-    this.pollOrderOutbox();
+  async onModuleInit() {
+    await this.pollOrderOutbox();
+    this.rmqService.registerInventoryReserveMessageResponseHandler(
+      this.handleInventoryReserveResponse,
+    );
   }
   async createPendingOrder(product: number, quantity: number) {
     await this.dataSource.transaction(async (entityManager) => {
@@ -40,7 +43,7 @@ export class OrdersService {
       console.debug(outboxMessages);
 
       await Promise.all(
-        outboxMessages.map((mes) => {
+        outboxMessages.map(async (mes) => {
           await this.rmqService.sendInventoryReserveMessage(mes);
         }),
       );
