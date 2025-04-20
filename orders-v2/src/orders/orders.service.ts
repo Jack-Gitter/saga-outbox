@@ -36,9 +36,7 @@ export class OrdersService {
       console.debug('found messages!');
       console.debug(outboxMessages);
 
-      outboxMessages.forEach((message) => {
-        this.rmqClient.emit(INVENTORY_RESERVE, message.toJSON());
-      });
+      outboxMessages.forEach((message) => {});
 
       await orderOutboxRepo.remove(outboxMessages);
     }, 5000);
