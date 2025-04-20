@@ -1,2 +1,2 @@
 export const ORDERS_RMQ_CLIENT = Symbol('ORDERS_RMQ_CLIENT');
-
+export const INVENTORY_RESERVE = 'INVENTORY_RESERVE';

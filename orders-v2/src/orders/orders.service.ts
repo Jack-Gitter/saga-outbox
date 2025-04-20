@@ -3,8 +3,7 @@ import { DataSource } from 'typeorm';
 import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
 import { ClientProxy } from '@nestjs/microservices';
-import { ORDERS_RMQ_CLIENT } from './orders.symbols';
-import { firstValueFrom } from 'rxjs';
+import { INVENTORY_RESERVE, ORDERS_RMQ_CLIENT } from './orders.symbols';
 
 @Injectable()
 export class OrdersService {
@@ -41,7 +40,7 @@ export class OrdersService {
       console.debug(outboxMessages);
 
       outboxMessages.forEach((message) => {
-        this.rmqClient.emit('INVENTORY_RESERVE', message.toJSON());
+        this.rmqClient.emit(INVENTORY_RESERVE, message.toJSON());
       });
 
       console.log('here!');
