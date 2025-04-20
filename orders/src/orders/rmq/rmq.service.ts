@@ -52,8 +52,8 @@ export class RMQService {
       queue,
       async (mes: Message) => {
         console.debug(`Got message from ${queue}`);
-        console.debug(mes);
         const contents = JSON.parse(mes.content.toString());
+        console.debug(contents);
         const messageResponse: MessageResponse = {
           successful: contents.successful,
           orderId: contents.orderId,
