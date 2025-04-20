@@ -51,6 +51,8 @@ export class RMQService {
     await this.channel.consume(
       queue,
       async (mes: Message) => {
+        console.debug(`Got message from ${queue}`);
+        console.debug(mes);
         const contents = JSON.parse(mes.content.toString());
         const messageResponse: MessageResponse = {
           successful: contents.successful,
