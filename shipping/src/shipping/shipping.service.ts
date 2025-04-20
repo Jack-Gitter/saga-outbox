@@ -7,9 +7,15 @@ export class ShippingService {
   constructor(private rmqService: RMQService) {}
   async handleShippingValidationMessage(mes: ShippingValidationMessage) {
     if (process.env.ACCEPT_SHIPPING ?? true) {
-      await this.rmqService.sendShippingValidationResponse(true);
+      await this.rmqService.sendShippingValidationResponse({
+        orderId: mes.orderId,
+        successful: true,
+      });
     } else {
-      await this.rmqService.sendShippingValidationResponse(false);
+      await this.rmqService.sendShippingValidationResponse({
+        orderId: mes.orderId,
+        successful: false,
+      });
     }
   }
 }
