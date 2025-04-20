@@ -11,6 +11,8 @@ import {
 export class RMQService {
   constructor(private channel: Channel) {}
   async sendShippingValidationResponse(mes: ShippingValidationResponse) {
+    console.debug(`Sending shipping validation response!`);
+    console.debug(mes);
     await this.channel.sendToQueue(
       SHIPPING_VALIDATION_RESPONSE,
       Buffer.from(JSON.stringify(mes)),
@@ -20,6 +22,7 @@ export class RMQService {
   async registerShippingValidationMessageHandler(
     fun: (mes: ShippingValidationMessage) => Promise<void>,
   ) {
+    console.debug(`Recieved shipping validation message!`);
     await this.channel.consume(
       SHIPPING_VALIDATION,
       async (mes: Message) => {
