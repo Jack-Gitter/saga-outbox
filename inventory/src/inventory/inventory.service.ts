@@ -26,7 +26,6 @@ export class InventoryService {
       const existingMessage = await inboxRepo.findOneBy({
         id: message.orderId,
       });
-      console.log(existingMessage);
       if (existingMessage) {
         console.debug(`already handled this message!`);
         return;

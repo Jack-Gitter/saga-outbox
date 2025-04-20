@@ -1,6 +1,6 @@
 import { Column, Entity } from 'typeorm';
 
-@Entity('InventoryReserveOutboxMessage')
+@Entity('InventoryRemoveOutboxMessage')
 export class InventoryRemoveOutboxMessageEntity {
   constructor(orderId: number, successful: boolean) {
     this.orderId = orderId;
