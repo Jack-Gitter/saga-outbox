@@ -55,6 +55,11 @@ export class OrdersService {
     }
 
     const order = await orderRepo.findOneBy({ id: mes.orderId });
-    this.rmqService.sendShippingValidationMessage();
+    const outboxMessage = new OrdersOutboxMessage(
+      order.product,
+      order.quantity,
+      order.id,
+    );
+    this.rmqService.sendShippingValidationMessage(outboxMessage);
   }
 }
