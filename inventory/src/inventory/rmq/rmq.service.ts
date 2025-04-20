@@ -4,7 +4,7 @@ import {
   INVENTORY_REMOVE,
   INVENTORY_RESERVE,
   INVENTORY_RESERVE_RESP,
-  InventoryDeleteInboxMessage,
+  InventoryRemoveInboxMessage,
   InventoryReserveInboxMessage,
 } from './rmq.types';
 import { InventoryReserveOutboxMessageEntity } from '../inventory.reserve.outbox.message.entity';
@@ -32,7 +32,7 @@ export class RMQService {
   }
 
   async registerInventoryRemoveMessageHandler(
-    fun: (message: InventoryDeleteInboxMessage) => Promise<void>,
+    fun: (message: InventoryRemoveInboxMessage) => Promise<void>,
   ) {
     this.channel.consume(
       INVENTORY_REMOVE,

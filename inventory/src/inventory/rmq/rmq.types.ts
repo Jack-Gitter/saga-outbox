@@ -7,7 +7,7 @@ export type InventoryReserveInboxMessage = {
   product: number;
   quantity: number;
 };
-export type InventoryDeleteInboxMessage = {
+export type InventoryRemoveInboxMessage = {
   orderId: number;
   product: number;
   quantity: number;
