@@ -1,13 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Order } from './orders.entity';
 import { OrdersOutboxMessage } from './orders.outbox.entity';
-import { ClientProxy } from '@nestjs/microservices';
-import { INVENTORY_RESERVE, ORDERS_RMQ_CLIENT } from './orders.symbols';
+import { RMQService } from './rmq/rmq.service';
 
 @Injectable()
 export class OrdersService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    private rmqService: RMQService,
+  ) {}
 
   onModuleInit() {
     this.pollOrderOutbox();
@@ -36,7 +38,9 @@ export class OrdersService {
       console.debug('found messages!');
       console.debug(outboxMessages);
 
-      outboxMessages.forEach((message) => {});
+      outboxMessages.forEach((message) => {
+        this.rmqService.sendInventoryReserveMessage(message);
+      });
 
       await orderOutboxRepo.remove(outboxMessages);
     }, 5000);

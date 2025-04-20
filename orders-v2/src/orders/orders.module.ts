@@ -1,9 +1,10 @@
-import { Module, Provider } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
-import { ORDERS_RMQ_CLIENT } from './orders.symbols';
+import { RMQModule } from './rmq/rmq.module';
 
 @Module({
+  imports: [RMQModule],
   controllers: [OrdersController],
   providers: [OrdersService],
 })
