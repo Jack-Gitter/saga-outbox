@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { InventoryReserveMessage } from './rmq/rmq.types';
-import { InventoryReserveInboxMessage } from './inventory.reserve.inbox.message.entity';
+import { InventoryReserveInboxMessage } from './rmq/rmq.types';
+import { InventoryReserveInboxMessageEntity } from './inventory.reserve.inbox.message.entity';
 import { InventoryReservation } from './inventory.entity';
 import { InventoryReserveOutboxMessage } from './inventory.reserve.outbox.message.entity';
 import { RMQService } from './rmq/rmq.service';
@@ -13,15 +13,19 @@ export class InventoryService {
     private rmqService: RMQService,
   ) {}
 
-  async handleInventoryReserveMessage(message: InventoryReserveMessage) {
+  async handleInventoryReserveMessage(message: InventoryReserveInboxMessage) {
     await this.dataSource.transaction(async (entityManager) => {
-      const inboxRepo = entityManager.getRepository(InventoryReserveInboxMessage);
+      const inboxRepo = entityManager.getRepository(
+        InventoryReserveInboxMessageEntity,
+      );
       const existingMessage = inboxRepo.findOneBy({ id: message.orderId });
       if (existingMessage) {
         console.debug(`already handled this message!`);
         return;
       }
-      const inboxMessage = new InventoryReserveInboxMessage(message.orderId);
+      const inboxMessage = new InventoryReserveInboxMessageEntity(
+        message.orderId,
+      );
       await inboxRepo.save(inboxMessage);
 
       const inventoryReservation = new InventoryReservation(
@@ -34,7 +38,9 @@ export class InventoryService {
       const res = await reservationRepo.insert(inventoryReservation);
       const successful = res.identifiers.length > 0;
 
-      const outboxRepo = entityManager.getRepository(InventoryReserveOutboxMessage);
+      const outboxRepo = entityManager.getRepository(
+        InventoryReserveOutboxMessage,
+      );
       const outboxMessage = new InventoryReserveOutboxMessage(
         message.orderId,
         successful,
@@ -44,12 +50,16 @@ export class InventoryService {
   }
 
   async pollOutbox() {
-    const outboxRepo = this.dataSource.getRepository(InventoryReserveOutboxMessage);
-    const messages = await outboxRepo.find();
+    const reserveOutboxRepo = this.dataSource.getRepository(
+      InventoryReserveOutboxMessage,
+    );
+    const messages = await reserveOutboxRepo.find();
 
-    await Promise.all(messages.map(message) => {
-        return this.rmqService.sendInventoryReserveResponse()
-    });
+    await Promise.all(
+      messages.map(async (message) => {
+        return await this.rmqService.sendInventoryReserveResponse(message);
+      }),
+    );
 
     // create messages and send them
   }

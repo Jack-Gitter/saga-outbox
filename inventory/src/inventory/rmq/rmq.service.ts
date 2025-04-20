@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Channel, Message } from 'amqplib-as-promised/lib';
-import { INVENTORY_RESERVE, InventoryReserveMessage } from './rmq.types';
+import {
+  INVENTORY_RESERVE,
+  INVENTORY_RESERVE_RESP,
+  InventoryReserveInboxMessage,
+} from './rmq.types';
+import { InventoryReserveOutboxMessage } from '../inventory.reserve.outbox.message.entity';
 
 @Injectable()
 export class RMQService {
   constructor(private channel: Channel) {}
 
   async registerInventoryReserveMessageHandler(
-    fun: (message: InventoryReserveMessage) => Promise<void>,
+    fun: (message: InventoryReserveInboxMessage) => Promise<void>,
   ) {
     await this.channel.consume(INVENTORY_RESERVE, async (mes: Message) => {
       const content = JSON.parse(mes.content.toString());
@@ -19,5 +24,10 @@ export class RMQService {
     });
   }
 
-  async sendInventoryReserveResponse() {}
+  async sendInventoryReserveResponse(message: InventoryReserveOutboxMessage) {
+    this.channel.sendToQueue(
+      INVENTORY_RESERVE_RESP,
+      Buffer.from(JSON.stringify(message.toJSON())),
+    );
+  }
 }
