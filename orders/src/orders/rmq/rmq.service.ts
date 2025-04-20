@@ -29,6 +29,21 @@ export class RMQService {
     );
   }
 
+  async sendShippingValidationMessage(mes: OrdersOutboxMessage) {
+    console.debug(`Sending shipping validation message!`);
+    await this.channel.sendToQueue(
+      SHIPPING_VALIDATION,
+      Buffer.from(JSON.stringify(mes.toJSON())),
+    );
+  }
+
+  async sendInventoryRemoveMessage(mes: OrdersOutboxMessage) {
+    console.debug(`Sending shipping validation message!`);
+    await this.channel.sendToQueue(
+      INVENTORY_REMOVE,
+      Buffer.from(JSON.stringify(mes.toJSON())),
+    );
+  }
   async registerQueueResponseHandler(
     queue: string,
     fun: (messageResponse: MessageResponse) => unknown,
@@ -45,22 +60,6 @@ export class RMQService {
         this.channel.ack(mes);
       },
       { noAck: false },
-    );
-  }
-
-  async sendShippingValidationMessage(mes: OrdersOutboxMessage) {
-    console.debug(`Sending shipping validation message!`);
-    await this.channel.sendToQueue(
-      SHIPPING_VALIDATION,
-      Buffer.from(JSON.stringify(mes.toJSON())),
-    );
-  }
-
-  async sendInventoryRemoveMessage(mes: OrdersOutboxMessage) {
-    console.debug(`Sending shipping validation message!`);
-    await this.channel.sendToQueue(
-      INVENTORY_REMOVE,
-      Buffer.from(JSON.stringify(mes.toJSON())),
     );
   }
 }
