@@ -9,8 +9,8 @@ export class ShippingController {
     private rmqService: RMQService,
   ) {}
 
-  onApplicationBootstrap() {
-    this.rmqService.registerShippingValidationMessageHandler(
+  async onApplicationBootstrap() {
+    await this.rmqService.registerShippingValidationMessageHandler(
       this.shippingService.handleShippingValidationMessage.bind(
         this.shippingService,
       ),
