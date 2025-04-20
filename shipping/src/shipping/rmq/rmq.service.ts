@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Channel } from 'amqplib-as-promised/lib';
+import { Channel, Message } from 'amqplib-as-promised/lib';
 import {
+  SHIPPING_VALIDATION,
   SHIPPING_VALIDATION_RESPONSE,
+  ShippingValidationMessage,
   ShippingValidationResponse,
 } from './rmq.types';
 
@@ -12,6 +14,22 @@ export class RMQService {
     await this.channel.sendToQueue(
       SHIPPING_VALIDATION_RESPONSE,
       Buffer.from(JSON.stringify(mes)),
+    );
+  }
+
+  async registerShippingValidationMessageHandler(
+    fun: (mes: ShippingValidationMessage) => Promise<void>,
+  ) {
+    await this.channel.consume(
+      SHIPPING_VALIDATION,
+      (mes: Message) => {
+        const content = JSON.parse(mes.content.toString());
+        await fun(content);
+        this.channel.ack(mes);
+      },
+      {
+        noAck: false,
+      },
     );
   }
 }
