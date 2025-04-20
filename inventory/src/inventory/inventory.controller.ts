@@ -8,7 +8,7 @@ export class InventoryController {
     private rmqService: RMQService,
     private inventoryService: InventoryService,
   ) {}
-  async onApplicationBoostrap() {
+  async onApplicationBootstrap() {
     await this.rmqService.registerInventoryReserveMessageHandler(
       this.inventoryService.handleInventoryReserveMessage.bind(
         this.inventoryService,
