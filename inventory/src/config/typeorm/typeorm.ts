@@ -1,4 +1,4 @@
-import { InventoryInboxMessage } from 'src/inventory/inventory.inbox.message.entity';
+import { InventoryReserveInboxMessage } from 'src/inventory/inventory.reserve.inbox.message.entity';
 import { DataSource } from 'typeorm';
 
 export const dataSource: DataSource = new DataSource({
@@ -8,6 +8,6 @@ export const dataSource: DataSource = new DataSource({
   username: 'postgres',
   password: 'postgres',
   database: 'postgres',
-  entities: [InventoryInboxMessage],
+  entities: [InventoryReserveInboxMessage],
   migrations: [],
 });

@@ -1,7 +1,7 @@
 import { Entity, Column } from 'typeorm';
 
-@Entity('InventoryInboxMessages')
-export class InventoryInboxMessage {
+@Entity('InventoryReserveInboxMessage')
+export class InventoryReserveInboxMessage {
   constructor(id: number) {
     this.id = id;
   }

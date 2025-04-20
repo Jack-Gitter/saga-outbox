@@ -18,4 +18,6 @@ export class RMQService {
       });
     });
   }
+
+  async sendInventoryReserveResponse() {}
 }
