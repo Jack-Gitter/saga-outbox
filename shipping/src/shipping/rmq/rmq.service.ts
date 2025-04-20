@@ -22,10 +22,10 @@ export class RMQService {
   async registerShippingValidationMessageHandler(
     fun: (mes: ShippingValidationMessage) => Promise<void>,
   ) {
-    console.debug(`Recieved shipping validation message!`);
     await this.channel.consume(
       SHIPPING_VALIDATION,
       async (mes: Message) => {
+        console.debug(`Recieved shipping validation message!`);
         const content = JSON.parse(mes.content.toString());
         await fun(content);
         this.channel.ack(mes);
